@@ -1,0 +1,30 @@
+{
+  "name": "moment-sim",
+  "version": "1.0.0",
+  "description": "A simulator for Moment https://wearmoment.com/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SomaticLabs/moment-sim.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SomaticLabs/moment-sim/issues"
+  },
+  "homepage": "https://github.com/SomaticLabs/moment-sim#readme",
+  "devDependencies": {
+    "webpack": "^2.2.0-rc.3"
+  },
+  "dependencies": {
+    "ace-builds": "^1.2.5",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.1.1",
+    "lodash": "^4.17.4"
+  }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 200px;
+    }
+
+    #sidebar {
+        width: 200px;
+        position: absolute;
+        text-align: center;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        background: #232323;
+    }
+
+/* device icon animations */
+.animated-device-icon {
+    position: relative;
+    display: inline-block;
+}
+@media (min-width: 80em) {
+    .animated-device-icon {
+        margin: 25px;
+    }
+}
+.animated-device-icon img {
+    height: 200px;
+    display: block;
+}
+.animated-pulse-icon {
+    position: absolute;
+    color: blue;
+    text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.2);
+    display: inline;
+    font-size: 12px;
+    opacity: 0.75;
+}
+.animated-pulse-icon:nth-child(5) {
+    top: 12px;
+    left: 6px;
+}
+.animated-pulse-icon:nth-child(2) {
+    top: 12px;
+    right: 6px;
+}
+.animated-pulse-icon:nth-child(3) {
+    bottom: 12px;
+    left: 6px;
+}
+.animated-pulse-icon:nth-child(4) {
+    bottom: 12px;
+    right: 6px;
+}
+
+.fa-circle {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background: blue;
+    border-radius: 6px;
+}
+
+  </style>
+</head>
+<body>
+
+
+<pre id="editor">function foo(items) {
+    var i;
+    for (i = 0; i &lt; items.length; i++) {
+        alert("Ace Rocks " + items[i]);
+    }
+}</pre>
+
+<div id="sidebar">
+  <div id="timer-animated-device-icon" class="animated-device-icon">
+      <img src="dist/device-icon.gif" alt="Animation showing how Moment can provide you with the passage of time as a sensation that moves across your skin.">
+      <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse1x infinite"></span></span>
+      <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse2x infinite"></span></span>
+      <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse3x infinite"></span></span>
+      <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse4x infinite"></span></span>
+  </div>
+</div>
+
+<script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/bundle.js" type="text/javascript" charset="utf-8"></script>
+
+</body>
+</html>
