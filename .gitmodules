@@ -1,0 +1,3 @@
+[submodule "dist/ace-builds"]
+	path = dist/ace-builds
+	url = git@github.com:ajaxorg/ace-builds.git
