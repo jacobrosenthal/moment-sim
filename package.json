@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "ace-builds": "^1.2.5",
+    "d3": "^4.4.0",
+    "electron": "^1.4.13",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",
     "lodash": "^4.17.4"
