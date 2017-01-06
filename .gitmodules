@@ -1,3 +1,6 @@
 [submodule "dist/ace-builds"]
 	path = dist/ace-builds
 	url = git@github.com:ajaxorg/ace-builds.git
+[submodule "dist/moment-sdk"]
+	path = dist/moment-sdk
+	url = git@github.com:SomaticLabs/moment-sdk.git
