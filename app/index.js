@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import * as d3 from "d3";
 
 function onReady() {
     var editor = ace.edit("editor");
