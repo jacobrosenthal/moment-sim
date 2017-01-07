@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import * as d3 from "d3";
+import store from 'store'
 
 var vibes = [],
 	editor,
