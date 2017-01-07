@@ -44,10 +44,13 @@ body {
     box-sizing: border-box;
 }
 
+#sidebar main {
+    overflow-y: hidden;
+}
+
 #simulator-tab {
     padding-top: 24px;
     box-sizing: border-box;
-    overflow-y: hidden;
     text-align: center;
 }
 
