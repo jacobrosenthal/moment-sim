@@ -26704,10 +26704,205 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 
+var vibes = [],
+	editor,
+	TEXT_KEY = "text";
+
+function getPinEl(pin) {
+	if (pin === Moment.Actuators.topLeft.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator");
+	}
+	if (pin === Moment.Actuators.topRight.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-right-actuator");
+	}
+	if (pin === Moment.Actuators.bottomLeft.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator");
+	}
+	if (pin === Moment.Actuators.bottomRight.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator");
+	}
+}
+
+function getBarEl(pin) {
+	if (pin === Moment.Actuators.topLeft.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#tl-bar");
+	}
+	if (pin === Moment.Actuators.topRight.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#tr-bar");
+	}
+	if (pin === Moment.Actuators.bottomLeft.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bl-bar");
+	}
+	if (pin === Moment.Actuators.bottomRight.pin) {
+		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#br-bar");
+	}
+}
+
+function computeScale(x) {
+	return (3.0 * x / 100.0) + 1.0;
+}
+
+Moment.setTimeout = window.setTimeout;
+Moment.clearTimeout = window.clearTimeout;
+Moment.setInterval = window.setInterval;
+Moment.clearInterval = window.clearInterval;
+
+var currentLooper = false;
+
+Moment.LED.setColor = function(color) {
+	if (currentLooper) window.clearInterval(currentLooper);
+	var c = "rgb(" + color.red + "," + color.green + "," + color.blue + ")";
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
+		.css('transition-duration', '')
+		.css('background-color', c);
+};
+
+Moment['_tween_led_color'] = function (r, g, b, func, duration) {
+	if (currentLooper) window.clearInterval(currentLooper);
+	var c = "rgb(" + r + "," + g + "," + b + ")";
+
+	function startTween() {
+		__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
+			.css('transition-duration', duration + 'ms')
+			.css('background-color', c);
+	}
+
+	startTween.duration = duration;
+
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween', startTween);
+	startTween();
+}
+
+Moment['_loop_led_color'] = function (r, g, b, func, duration) {
+	if (currentLooper) window.clearInterval(currentLooper);
+	var c = "rgb(" + r + "," + g + "," + b + ")";
+
+	function startLoop() {
+		__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
+			.css('transition-duration', duration + 'ms')
+			.css('background-color', c);
+	}
+
+	var loop = true;
+
+	startLoop.duration = duration;
+
+	function runLoop() {
+		startLoop();
+		var fn = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween');
+
+		window.setTimeout(fn, fn.duration);
+	}
+
+	currentLooper = window.setInterval(runLoop, duration + __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween').duration);
+}
+
+Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
+	vibes.push({
+		'pin': pin,
+		'start': start,
+		'end': end,
+		'func': func,
+		'duration': duration,
+		'position': position,
+		'delay': delay
+	});
+
+	var pinEl = getPinEl(pin),
+		barEl = getBarEl(pin);
+
+	var startScale = computeScale(start)
+
+	function executeTransition() {
+		pinEl.css('transform', 'scale(' + startScale + ')');
+		barEl.css('transform', 'scaleY(' + start / 100.0 + ')');
+
+		var endScale = computeScale(end);
+
+		pinEl.css({
+			'transition-duration': duration + 'ms',
+			'transition-property': 'transform'
+		});
+
+		barEl.css({
+			'transition-duration': duration + 'ms',
+			'transition-property': 'transform'
+		});
+
+		// TODO: implement position handling
+		// TODO: implement easing equations
+
+		pinEl.css('transform', 'scale(' + endScale + ')');
+		barEl.css('transform', 'scaleY(' + end / 100.0 + ')');
+	}
+
+	window.setTimeout(executeTransition, delay);
+
+};
+
+function onChange() {
+	var v = editor.getValue();
+	store.set(TEXT_KEY, v);
+}
+
+function onRun() {
+	vibes = [];
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator").css({
+		'transition-duration': '',
+		'transition-property': '',
+		'transform': ''
+	});
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-right-actuator").css({
+		'transition-duration': '',
+		'transition-property': '',
+		'transform': ''
+	});
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").css({
+		'transition-duration': '',
+		'transition-property': '',
+		'transform': ''
+	});
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").css({
+		'transition-duration': '',
+		'transition-property': '',
+		'transform': ''
+	});
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").css({
+		'transition-duration': '',
+		'transition-property': '',
+		'transform': ''
+	});
+	eval(editor.getValue());
+}
+
 function onReady() {
-    var editor = ace.edit("editor");
+    editor = ace.edit("editor");
     editor.setTheme("ace/theme/solarized_light");
     editor.session.setMode("ace/mode/javascript");
+    editor.setShowInvisibles(true);
+    editor.setHighlightSelectedWord(true);
+
+    var v = store.get(TEXT_KEY);
+    if (v) {
+         editor.setValue(v);
+         editor.gotoLine(editor.session.getLength());
+    }
+    editor.on('change', onChange);
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#run-button").on("click", onRun);
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("mdl-js-progress").on("mdl-componentupgraded", function () {
+        this.MaterialProgress.setProgress(0);
+    });
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#vim-switch").on("change", function () {
+        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).is(":checked")) {
+            editor.setKeyboardHandler("ace/keyboard/vim");
+        }
+        else {
+            editor.setKeyboardHandler(null);
+        }
+    });
 }
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
@@ -26731,11 +26926,9 @@ var line = __WEBPACK_IMPORTED_MODULE_1_d3__["line"]()
     .x(function(d) { return x(d.time); })
     .y(function(d) { return y(d.value); });
 
-Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
 
-};
-
-__WEBPACK_IMPORTED_MODULE_1_d3__["tsv"]("data.tsv", type, function(error, data) {
+/*
+d3.tsv("data.tsv", type, function(error, data) {
   if (error) throw error;
 
   var cities = data.columns.slice(1).map(function(id) {
@@ -26747,11 +26940,11 @@ __WEBPACK_IMPORTED_MODULE_1_d3__["tsv"]("data.tsv", type, function(error, data) 
     };
   });
 
-  x.domain(__WEBPACK_IMPORTED_MODULE_1_d3__["extent"](data, function(d) { return d.date; }));
+  x.domain(d3.extent(data, function(d) { return d.date; }));
 
   y.domain([
-    __WEBPACK_IMPORTED_MODULE_1_d3__["min"](cities, function(c) { return __WEBPACK_IMPORTED_MODULE_1_d3__["min"](c.values, function(d) { return d.temperature; }); }),
-    __WEBPACK_IMPORTED_MODULE_1_d3__["max"](cities, function(c) { return __WEBPACK_IMPORTED_MODULE_1_d3__["max"](c.values, function(d) { return d.temperature; }); })
+    d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
+    d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.temperature; }); })
   ]);
 
   z.domain(cities.map(function(c) { return c.id; }));
@@ -26759,11 +26952,11 @@ __WEBPACK_IMPORTED_MODULE_1_d3__["tsv"]("data.tsv", type, function(error, data) 
   g.append("g")
       .attr("class", "axis axis--x")
       .attr("transform", "translate(0," + height + ")")
-      .call(__WEBPACK_IMPORTED_MODULE_1_d3__["axisBottom"](x));
+      .call(d3.axisBottom(x));
 
   g.append("g")
       .attr("class", "axis axis--y")
-      .call(__WEBPACK_IMPORTED_MODULE_1_d3__["axisLeft"](y))
+      .call(d3.axisLeft(y))
     .append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 6)
@@ -26788,7 +26981,7 @@ __WEBPACK_IMPORTED_MODULE_1_d3__["tsv"]("data.tsv", type, function(error, data) 
       .attr("dy", "0.35em")
       .style("font", "10px sans-serif")
       .text(function(d) { return d.id; });
-});
+});*/
 
 function type(d, _, columns) {
   d.date = parseTime(d.date);

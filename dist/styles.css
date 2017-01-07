@@ -29,17 +29,50 @@ body {
     left: 33%;
 }
 
+#run-button {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+}
+
 #sidebar {
     position: absolute;
-    text-align: center;
     top: 0;
     bottom: 0;
     left: 0;
     right: 67%;
+    box-sizing: border-box;
+}
+
+#simulator-tab {
+    padding-top: 24px;
+    box-sizing: border-box;
+    overflow-y: hidden;
+    text-align: center;
+}
+
+#actuator-bars {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 50%;
+    background: #ececec;
+}
+
+#actuator-bars .actuator-bar {
+    display: inline-block;
+    width: 20%;
+    box-sizing: border-box;
+    background: blue;
+    transition-property: transform;
+    height: 100%;
+    transform: scaleY(0);
 }
 
 #timeline-chart {
     width: 100%;
+    box-sizing: border-box;
 }
 
 /* device icon animations */
@@ -87,4 +120,17 @@ body {
     display: inline-block;
     background: blue;
     border-radius: 6px;
+}
+
+#center-led-container {
+    top: 90px;
+    left: 65px;
+}
+
+#center-led {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: black;
+    transform: scale(1.5);
 }

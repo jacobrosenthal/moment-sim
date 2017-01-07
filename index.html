@@ -26,6 +26,7 @@ var tlPulse = new Vibration(
     quickPulse, // use the 500ms exponential ease in effect
     0 // begin immediately after tlPulse.start() is called
 );
+
 var quickIn = new Effect(
     25, // start at 25% intensity
     75, // end at 75% intensity
@@ -37,8 +38,9 @@ var quickIn = new Effect(
 var blIn = new Vibration(
     Moment.Actuators.bottomLeft, // select bottom left actuator
     quickIn, // use the 400ms quadratic ease in effect
-    200 // begin effect 200ms after blIn.start() is called
+    2000 // begin effect 200ms after blIn.start() is called
 );
+
 var fadeOut = new Effect(
     75, // start at 75% intensity
     25, // end at 25% intensity
@@ -49,12 +51,36 @@ var fadeOut = new Effect(
 var trFade = new Vibration(
     Moment.Actuators.topRight, // select top right actuator
     fadeOut, // use the 750ms exponential fade out effect
-    100 // begin effect after 100ms
+    1500 // begin effect after 100ms
 );
 
 var timeline = new Timeline([tlPulse, blIn, trFade]);
 
-timeline.start();</pre>
+timeline.start();
+
+// loop between a 500ms quadratic transition to an orange color
+// and a 100ms inverse exponential transition to a green color
+var orangeTransition = new Moment.LED.Transition(
+    new Moment.Color(0xff, 0x99, 0x33),
+    Moment.Easing.Quadratic.in,
+    500
+);
+
+var greenTransition = new Moment.LED.Transition(
+    new Moment.Color(0x00, 0x88, 0x11),
+    Moment.Easing.Exponential.out,
+    100
+);
+
+Moment.LED.loopColor(orangeTransition, greenTransition);</pre>
+
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" id="run-button">
+  <i class="material-icons">play_arrow</i>
+</button>
+
+<div class="mdl-tooltip mdl-tooltip--top" for="run-button">
+Run Code
+</div>
 
 <div id="sidebar">
 <!-- Simple header with fixed tabs. -->
@@ -74,7 +100,7 @@ timeline.start();</pre>
   </header>
 
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">Settings</span>
+    <span class="mdl-layout-title"><i class="material-icons">settings</i> Settings</span>
 
     <ul class="mdl-list">
             <li class="mdl-list__item">
@@ -124,18 +150,38 @@ timeline.start();</pre>
                     </label>
                 </span>
             </li>
+
+            <li class="mdl-list__item">
+                <span class="mdl-list__item-primary-content">
+                    Vim Keybindings
+                </span>
+
+                <span class="mdl-list__item-secondary-action">
+                    <label for="vim-switch" class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
+                      <input type="checkbox" id="vim-switch" class="mdl-switch__input">
+                    </label>
+                </span>
+            </li>
         </ul>
   </div>
 
   <main class="mdl-layout__content">
     <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
-      <div class="page-content">
+      <div class="page-content" id="simulator-tab">
           <div id="timer-animated-device-icon" class="animated-device-icon">
               <img src="dist/device-icon.gif" alt="Animation showing how Moment can provide you with the passage of time as a sensation that moves across your skin.">
-              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse1x infinite"></span></span>
-              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse2x infinite"></span></span>
-              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse3x infinite"></span></span>
-              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse4x infinite"></span></span>
+              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse1x infinite" id="top-right-actuator"></span></span>
+              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse2x infinite" id="bottom-left-actuator"></span></span>
+              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse3x infinite" id="bottom-right-actuator"></span></span>
+              <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse4x infinite" id="top-left-actuator"></span></span>
+              <span aria-hidden="true" class="animated-pulse-icon" id="center-led-container"><span class="fa fa-circle animated pulse4x infinite" id="center-led"></span></span>
+          </div>
+
+          <div id="actuator-bars">
+              <div id="tl-bar" class="actuator-bar"></div>
+              <div id="tr-bar" class="actuator-bar"></div>
+              <div id="bl-bar" class="actuator-bar"></div>
+              <div id="br-bar" class="actuator-bar"></div>
           </div>
       </div>
     </section>
@@ -155,6 +201,7 @@ timeline.start();</pre>
 <script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="dist/moment-sdk/dist/environment.js" type="text/javascript" charset="utf-8"></script>
 <script src="node_modules/material-design-lite/material.min.js"></script>
+<script src="node_modules/store/store.min.js"></script>
 <script src="dist/bundle.js" type="text/javascript" charset="utf-8"></script>
 
 </body>
