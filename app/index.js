@@ -3,13 +3,13 @@ import * as d3 from "d3";
 
 function onReady() {
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setTheme("ace/theme/solarized_light");
     editor.session.setMode("ace/mode/javascript");
 }
 
 $(document).ready(onReady);
 
-$(function () {
+(function () {
 
 var svg = d3.select("svg"),
     margin = {top: 20, right: 80, bottom: 30, left: 50},
@@ -25,8 +25,12 @@ var x = d3.scaleTime().range([0, width]),
 
 var line = d3.line()
     .curve(d3.curveBasis)
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.temperature); });
+    .x(function(d) { return x(d.time); })
+    .y(function(d) { return y(d.value); });
+
+Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
+
+};
 
 d3.tsv("data.tsv", type, function(error, data) {
   if (error) throw error;
@@ -89,4 +93,4 @@ function type(d, _, columns) {
   return d;
 }
 
-});
+})();

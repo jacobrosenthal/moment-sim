@@ -1,0 +1,90 @@
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url('dist/fonts/Ubuntu_Mono/UbuntuMono-Regular.ttf');
+  unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+}
+
+.ace_editor {
+    font-family: 'Ubuntu Mono', 'Lucida Console', 'Monaco', monospaced;
+}
+
+body {
+    overflow: hidden;
+}
+
+.mdl-layout-title img {
+    height: 36px;
+    margin: 0px;
+    padding: 12px;
+}
+
+#editor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 33%;
+}
+
+#sidebar {
+    position: absolute;
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 67%;
+}
+
+#timeline-chart {
+    width: 100%;
+}
+
+/* device icon animations */
+.animated-device-icon {
+    position: relative;
+    display: inline-block;
+}
+@media (min-width: 80em) {
+    .animated-device-icon {
+        margin: 25px;
+    }
+}
+.animated-device-icon img {
+    height: 200px;
+    display: block;
+}
+.animated-pulse-icon {
+    position: absolute;
+    color: blue;
+    text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.2);
+    display: inline;
+    font-size: 12px;
+    opacity: 0.75;
+}
+.animated-pulse-icon:nth-child(5) {
+    top: 12px;
+    left: 6px;
+}
+.animated-pulse-icon:nth-child(2) {
+    top: 12px;
+    right: 6px;
+}
+.animated-pulse-icon:nth-child(3) {
+    bottom: 12px;
+    left: 6px;
+}
+.animated-pulse-icon:nth-child(4) {
+    bottom: 12px;
+    right: 6px;
+}
+
+.fa-circle {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background: blue;
+    border-radius: 6px;
+}

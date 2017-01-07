@@ -26706,13 +26706,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 function onReady() {
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setTheme("ace/theme/solarized_light");
     editor.session.setMode("ace/mode/javascript");
 }
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
 
-__WEBPACK_IMPORTED_MODULE_0_jquery___default()(function () {
+(function () {
 
 var svg = __WEBPACK_IMPORTED_MODULE_1_d3__["select"]("svg"),
     margin = {top: 20, right: 80, bottom: 30, left: 50},
@@ -26728,8 +26728,12 @@ var x = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleTime"]().range([0, width]),
 
 var line = __WEBPACK_IMPORTED_MODULE_1_d3__["line"]()
     .curve(__WEBPACK_IMPORTED_MODULE_1_d3__["curveBasis"])
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.temperature); });
+    .x(function(d) { return x(d.time); })
+    .y(function(d) { return y(d.value); });
+
+Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
+
+};
 
 __WEBPACK_IMPORTED_MODULE_1_d3__["tsv"]("data.tsv", type, function(error, data) {
   if (error) throw error;
@@ -26792,7 +26796,7 @@ function type(d, _, columns) {
   return d;
 }
 
-});
+})();
 
 
 /***/ }
