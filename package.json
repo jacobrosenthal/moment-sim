@@ -5,14 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SomaticLabs/moment-sim.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Electron",
+    "Moment",
+    "haptics",
+    "timeline",
+    "editor"
+  ],
+  "author": "Somatic Labs",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SomaticLabs/moment-sim/issues"
