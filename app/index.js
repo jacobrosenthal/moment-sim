@@ -170,6 +170,10 @@ function onRun() {
 		'transition-property': '',
 		'transform': ''
 	});
+
+	var code = editor.getValue();
+	code = "(function (Moment) { " + code;
+	code = code + " })(Moment);";
 	eval(editor.getValue());
 }
 
