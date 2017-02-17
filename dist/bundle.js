@@ -27053,13 +27053,16 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 	var pinEl = getPinEl(pin),
 		barEl = getBarEl(pin);
 
-	var startScale = computeScale(start)
+	var startScale = computeScale(start);
 
 	function executeTransition() {
+		console.log("Start scale: ", startScale);
 		pinEl.css('transform', 'scale(' + startScale + ')');
 		barEl.css('transform', 'scaleY(' + start / 100.0 + ')');
 
 		var endScale = computeScale(end);
+
+		window.setTimeout(function () {
 
 		pinEl.css({
 			'transition-duration': duration + 'ms',
@@ -27075,7 +27078,10 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 		// TODO: implement easing equations
 
 		pinEl.css('transform', 'scale(' + endScale + ')');
+		console.log("End scale: ", endScale);
 		barEl.css('transform', 'scaleY(' + end / 100.0 + ')');
+
+		}, 5);
 	}
 
 	window.setTimeout(executeTransition, delay);
@@ -27089,36 +27095,18 @@ function onChange() {
 
 function onRun() {
 	vibes = [];
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator").css({
-		'transition-duration': '',
-		'transition-property': '',
-		'transform': ''
-	});
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-right-actuator").css({
-		'transition-duration': '',
-		'transition-property': '',
-		'transform': ''
-	});
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").css({
-		'transition-duration': '',
-		'transition-property': '',
-		'transform': ''
-	});
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").css({
-		'transition-duration': '',
-		'transition-property': '',
-		'transform': ''
-	});
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").css({
-		'transition-duration': '',
-		'transition-property': '',
-		'transform': ''
-	});
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator").removeAttr('style');
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-right-actuator").removeAttr('style');
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").removeAttr('style');
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").removeAttr('style');
+	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").removeAttr('style');
 
-	var code = editor.getValue();
-	code = "(function (Moment) { " + code;
-	code = code + " })(Moment);";
-	eval(editor.getValue());
+	window.setTimeout(function () {
+		var code = editor.getValue();
+		code = "(function (Moment) { " + code;
+		code = code + " })(Moment);";
+		eval(editor.getValue());
+	}, 100);
 }
 
 function onReady() {
