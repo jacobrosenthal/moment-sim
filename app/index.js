@@ -162,6 +162,8 @@ function onRun() {
 		code = "(function (Moment) { " + code;
 		code = code + " })(Moment);";
 		eval(editor.getValue());
+
+		drawChart();
 	}, 100);
 }
 
@@ -193,19 +195,28 @@ function onReady() {
             editor.setKeyboardHandler(null);
         }
     });
+
+    (function () {
+	    var realConsoleLog = console.log;
+		console.log = function () {
+		    var message = [].join.call(arguments, " ");
+		    // Display the message somewhere... (jQuery example)
+		    var d = $("#repl-content").append($("<div />").text(message));
+		    d.scrollTop(d.prop("scrollHeight"));
+		    realConsoleLog.apply(console, arguments);
+		};
+    })();
 }
 
 $(document).ready(onReady);
 
-(function () {
+function drawChart() {
 
 var svg = d3.select("svg"),
     margin = {top: 20, right: 80, bottom: 30, left: 50},
     width = svg.attr("width") - margin.left - margin.right,
     height = svg.attr("height") - margin.top - margin.bottom,
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var parseTime = d3.timeParse("%Y%m%d");
 
 var x = d3.scaleTime().range([0, width]),
     y = d3.scaleLinear().range([height, 0]),
@@ -214,30 +225,49 @@ var x = d3.scaleTime().range([0, width]),
 var line = d3.line()
     .curve(d3.curveBasis)
     .x(function(d) { return x(d.time); })
-    .y(function(d) { return y(d.value); });
+    .y(function(d) { return y(d.intensity); });
 
 
-/*
-d3.tsv("data.tsv", type, function(error, data) {
-  if (error) throw error;
+var data = vibes;
 
-  var cities = data.columns.slice(1).map(function(id) {
-    return {
-      id: id,
-      values: data.map(function(d) {
-        return {date: d.date, temperature: d[id]};
-      })
-    };
+  var actuators = [{}, {}, {}, {}];
+
+  actuators.forEach(function (a, i) {
+    a['pin'] = i;
+    a['values'] = [];
+
+    vibes.forEach(function (v, j) {
+      if (v.pin == i) {
+        a['values'].push({'time': v['delay'], 'intensity': v['start']});
+        a['values'].push({'time': v['delay'] + v['duration'] - v['position'], 'intensity': v['end']});
+      }
+    });
+
+    if (a['values'].length == 0) {
+        a['values'].push({
+            'time': 0,
+            'intensity': 0
+        });
+    }
   });
 
-  x.domain(d3.extent(data, function(d) { return d.date; }));
+  var xDomain = [];
+  vibes.forEach(function (v) {
+    xDomain.push(v['delay']);
+    xDomain.push(v['delay'] + v['duration'] - v['position']);
+  });
 
-  y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(d) { return d.temperature; }); }),
-    d3.max(cities, function(c) { return d3.max(c.values, function(d) { return d.temperature; }); })
-  ]);
+  x.domain(d3.extent(xDomain));
 
-  z.domain(cities.map(function(c) { return c.id; }));
+  var yDomain = [];
+  vibes.forEach(function (v) {
+    yDomain.push(v['start']);
+    yDomain.push(v['end']);
+  });
+
+  y.domain(d3.extent(yDomain));
+
+  z.domain([0, 1, 2, 3]);
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -252,31 +282,24 @@ d3.tsv("data.tsv", type, function(error, data) {
       .attr("y", 6)
       .attr("dy", "0.71em")
       .attr("fill", "#000")
-      .text("Temperature, ºF");
+      .text("Intensity, %");
 
-  var city = g.selectAll(".city")
-    .data(cities)
+  var actuator = g.selectAll(".actuator")
+    .data(actuators)
     .enter().append("g")
-      .attr("class", "city");
+      .attr("class", "actuator");
 
-  city.append("path")
+  actuator.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) { return z(d.id); });
 
-  city.append("text")
-      .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+  actuator.append("text")
+      .datum(function(d) { return {pin: d.pin, value: d.values[d.values.length - 1]}; })
+      .attr("transform", function(d) { console.log(d); return "translate(" + x(d.value.time) + "," + y(d.value.intensity) + ")"; })
       .attr("x", 3)
       .attr("dy", "0.35em")
       .style("font", "10px sans-serif")
-      .text(function(d) { return d.id; });
-});*/
+      .text(function(d) { return d.pin; });
 
-function type(d, _, columns) {
-  d.date = parseTime(d.date);
-  for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
-  return d;
 }
-
-})();

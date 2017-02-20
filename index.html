@@ -190,11 +190,15 @@ Run Code
     </section>
     <section class="mdl-layout__tab-panel" id="fixed-tab-2">
       <div class="page-content">
-        <svg width="960" height="500" id="timeline-chart"></svg>
+        <svg width="400" height="400" id="timeline-chart"></svg>
       </div>
     </section>
     <section class="mdl-layout__tab-panel" id="fixed-tab-3">
-      <div class="page-content"><!-- Your content goes here --></div>
+      <div class="page-content">
+          <div id="repl-content">
+          </div>
+          <input type="text" id="repl-input" value="">
+      </div>
     </section>
   </main>
 </div>
@@ -202,7 +206,10 @@ Run Code
 </div>
 
 <script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="dist/moment-sdk/dist/environment.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/init.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/led.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/haptics.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/device.js" type="text/javascript" charset="utf-8"></script>
 <script src="node_modules/material-design-lite/material.min.js"></script>
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script src="dist/bundle.js" type="text/javascript" charset="utf-8"></script>
