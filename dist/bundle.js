@@ -27113,7 +27113,7 @@ function onRun() {
 
 function onReady() {
     editor = ace.edit("editor");
-    editor.setTheme("ace/theme/solarized_light");
+    editor.setTheme("ace/theme/tomorrow");
     editor.session.setMode("ace/mode/javascript");
     editor.setShowInvisibles(true);
     editor.setHighlightSelectedWord(true);
