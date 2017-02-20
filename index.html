@@ -94,12 +94,12 @@ Run Code
       <!-- Title -->
       <span class="mdl-layout-title"><img src="dist/moment.png" alt="Moment"></span>
     </div>
-    <!-- Tabs -->
+    <!-- Tabs
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
       <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Simulator</a>
       <a href="#fixed-tab-2" class="mdl-layout__tab">Timeline</a>
       <a href="#fixed-tab-3" class="mdl-layout__tab">Console</a>
-    </div>
+    </div> -->
   </header>
 
   <div class="mdl-layout__drawer">
@@ -179,6 +179,14 @@ Run Code
               <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse4x infinite" id="top-left-actuator"></span></span>
               <span aria-hidden="true" class="animated-pulse-icon" id="center-led-container"><span class="fa fa-circle animated pulse4x infinite" id="center-led"></span></span>
           </div>
+          <div class="page-content">
+            <div id="actuator-graph">
+            <svg width="400" height="280" id="timeline-chart"></svg>
+            </div>
+          </div>
+      </div>
+    </section>
+    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
 
           <div id="actuator-bars">
               <div id="tl-bar" class="actuator-bar"></div>
@@ -186,12 +194,6 @@ Run Code
               <div id="bl-bar" class="actuator-bar"></div>
               <div id="br-bar" class="actuator-bar"></div>
           </div>
-      </div>
-    </section>
-    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
-      <div class="page-content">
-        <svg width="400" height="400" id="timeline-chart"></svg>
-      </div>
     </section>
     <section class="mdl-layout__tab-panel" id="fixed-tab-3">
       <div class="page-content">

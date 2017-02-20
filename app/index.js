@@ -216,7 +216,9 @@ function getIntensity(t, v) {
 
 	var intensity = v.start;
 
-	intensity += (t / v.duration) * (v.end - v.start);
+	var fn = MomentEffects[v.func];
+
+	intensity += fn(t / v.duration) * (v.end - v.start);
 	return intensity;
 }
 
@@ -341,3 +343,267 @@ var data = vibes;
       .text(function(d) { return d.pin; });
 
 }
+
+
+(function () {
+
+var M_PI = 3.14159265358979323846;
+var M_PI_2 = 1.57079632679;
+
+var pow = Math.pow,
+	sqrt = Math.sqrt,
+	sin = Math.sin;
+
+function out_effect(p) {
+    return 0.0;
+}
+
+function in_effect(p) {
+    return 1.0;
+}
+
+function linear_effect(p) {
+    return p;
+}
+
+function quadratic_effect(p) {
+    return p * p;
+}
+
+function inverse_quadratic_effect(p) {
+    return -(p * (p - 2));
+}
+
+function combined_quadratic_effect(p) {
+    if(p < 0.5)
+    {
+        return 2 * p * p;
+    }
+    else
+    {
+        return (-2 * p * p) + (4 * p) - 1;
+    }
+}
+
+function cubic_effect(p) {
+    return p * p * p;
+}
+
+function inverse_cubic_effect(p) {
+    var f = (p - 1.0);
+    return f * f * f + 1.0;
+}
+
+function combined_cubic_effect(p) {
+    if(p < 0.5)
+    {
+        return 4.0 * p * p * p;
+    }
+    else
+    {
+        var f = ((2.0 * p) - 2.0);
+        return 0.5 * f * f * f + 1;
+    }
+}
+
+function quartic_effect(p) {
+    return p * p * p * p;
+}
+
+function inverse_quartic_effect(p) {
+    var f = (p - 1.0);
+    return f * f * f * (1 - p) + 1;
+}
+
+function combined_quartic_effect(p) {
+    if(p < 0.5)
+    {
+        return 8 * p * p * p * p;
+    }
+    else
+    {
+        var f = (p - 1);
+        return -8 * f * f * f * f + 1;
+    }
+}
+
+function quintic_effect(p) {
+    return p * p * p * p * p;
+}
+
+function inverse_quintic_effect(p) {
+    var f = (p - 1.0);
+    return f * f * f * f * f + 1;
+}
+
+function combined_quintic_effect(p) {
+    if(p < 0.5)
+    {
+        return 16 * p * p * p * p * p;
+    }
+    else
+    {
+        var f = ((2 * p) - 2);
+        return  0.5 * f * f * f * f * f + 1;
+    }
+}
+
+function sine_effect(p) {
+    return sin((p - 1) * M_PI_2) + 1;
+}
+
+function inverse_sine_effect(p) {
+    return sin(p * M_PI_2);
+}
+
+function combined_sine_effect(p) {
+    return 0.5 * (1 - cos(p * M_PI));
+}
+
+function circular_effect(p) {
+    return 1 - sqrt(1 - (p * p));
+}
+
+function inverse_circular_effect(p) {
+    return sqrt((2 - p) * p);
+}
+
+function combined_circular_effect(p) {
+    if(p < 0.5)
+    {
+        return 0.5 * (1 - sqrt(1 - 4 * (p * p)));
+    }
+    else
+    {
+        return 0.5 * (sqrt(-((2 * p) - 3) * ((2 * p) - 1)) + 1);
+    }
+}
+
+function exponential_effect(p) {
+    return (p == 0.0) ? p : pow(2, 10 * (p - 1));
+}
+
+function inverse_exponential_effect(p) {
+    return (p == 1.0) ? p : 1 - pow(2, -10 * p);
+}
+
+function combined_exponential_effect(p) {
+    if(p == 0.0 || p == 1.0) return p;
+
+    if(p < 0.5)
+    {
+        return 0.5 * pow(2, (20 * p) - 10);
+    }
+    else
+    {
+        return -0.5 * pow(2, (-20 * p) + 10) + 1;
+    }
+}
+
+function elastic_effect(p) {
+    return sin(13 * M_PI_2 * p) * pow(2, 10 * (p - 1));
+}
+
+function inverse_elastic_effect(p) {
+    return sin(-13 * M_PI_2 * (p + 1)) * pow(2, -10 * p) + 1;
+}
+
+function combined_elastic_effect(p) {
+    if(p < 0.5)
+    {
+        return 0.5 * sin(13 * M_PI_2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1));
+    }
+    else
+    {
+        return 0.5 * (sin(-13 * M_PI_2 * ((2 * p - 1) + 1)) * pow(2, -10 * (2 * p - 1)) + 2);
+    }
+}
+
+function back_effect(p) {
+    return p * p * p - p * sin(p * M_PI);
+}
+
+function inverse_back_effect(p) {
+    var f = (1 - p);
+    return 1 - (f * f * f - f * sin(f * M_PI));
+}
+
+function combined_back_effect(p) {
+    if(p < 0.5)
+    {
+        var f = 2 * p;
+        return 0.5 * (f * f * f - f * sin(f * M_PI));
+    }
+    else
+    {
+        var f = (1 - (2*p - 1));
+        return 0.5 * (1 - (f * f * f - f * sin(f * M_PI))) + 0.5;
+    }
+}
+
+function bounce_effect(p) {
+    p = 1.0 - p;
+    if(p < 4/11.0)
+    {
+        return 1.0 - ((121 * p * p)/16.0);
+    }
+    else if(p < 8/11.0)
+    {
+        return 1.0 - ((363/40.0 * p * p) - (99/10.0 * p) + 17/5.0);
+    }
+    else if(p < 9/10.0)
+    {
+        return 1.0 - ((4356/361.0 * p * p) - (35442/1805.0 * p) + 16061/1805.0);
+    }
+    else
+    {
+        return 1.0 - ((54/5.0 * p * p) - (513/25.0 * p) + 268/25.0);
+    }
+}
+
+function inverse_bounce_effect(p) {
+    if(p < 4/11.0)
+    {
+        return (121 * p * p)/16.0;
+    }
+    else if(p < 8/11.0)
+    {
+        return (363/40.0 * p * p) - (99/10.0 * p) + 17/5.0;
+    }
+    else if(p < 9/10.0)
+    {
+        return (4356/361.0 * p * p) - (35442/1805.0 * p) + 16061/1805.0;
+    }
+    else
+    {
+        return (54/5.0 * p * p) - (513/25.0 * p) + 268/25.0;
+    }
+}
+
+function combined_bounce_effect(p) {
+    if(p < 0.5)
+    {
+        return 0.5 * bounce_effect(p*2);
+    }
+    else
+    {
+        return 0.5 * inverse_bounce_effect(p * 2 - 1) + 0.5;
+    }
+}
+
+var MomentEffects = [
+    out_effect,         in_effect,                  linear_effect,
+    quadratic_effect,   inverse_quadratic_effect,   combined_quadratic_effect,
+    cubic_effect,       inverse_cubic_effect,       combined_cubic_effect,
+    quartic_effect,     inverse_quartic_effect,     combined_quartic_effect,
+    quintic_effect,     inverse_quintic_effect,     combined_quintic_effect,
+    sine_effect,        inverse_sine_effect,        combined_sine_effect,
+    circular_effect,    inverse_circular_effect,    combined_circular_effect,
+    exponential_effect, inverse_exponential_effect, combined_exponential_effect,
+    elastic_effect,     inverse_elastic_effect,     combined_elastic_effect,
+    back_effect,        inverse_back_effect,        combined_back_effect,
+    bounce_effect,      inverse_bounce_effect,      combined_bounce_effect
+];
+
+window.MomentEffects = MomentEffects;
+})();
