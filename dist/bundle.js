@@ -27154,6 +27154,27 @@ function onReady() {
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
 
+function getIntensity(t, v) {
+	t -= v.delay;
+	t += v.position;
+
+	var intensity = v.start;
+
+	intensity += (t / v.duration) * (v.end - v.start);
+	return intensity;
+}
+
+function computeValue(t, items) {
+	var v;
+	for (var i = 0, len = items.length; i < len; i++) {
+		v = items[i];
+		if (t >= v.delay && t <= v.delay + v.duration - v.position) {
+			return getIntensity(t, v);
+		}
+	}
+	return 0;
+}
+
 function drawChart() {
 
 var svg = __WEBPACK_IMPORTED_MODULE_1_d3__["select"]("svg"),
@@ -27178,15 +27199,30 @@ var data = vibes;
 
   actuators.forEach(function (a, i) {
     a['pin'] = i;
-    a['values'] = [];
+    var values = [];
+    a['values'] = values;
 
-    vibes.forEach(function (v, j) {
-      if (v.pin == i) {
-        a['values'].push({'time': v['delay'], 'intensity': v['start']});
-        a['values'].push({'time': v['delay'] + v['duration'] - v['position'], 'intensity': v['end']});
-      }
+    var items = vibes.filter(function (v) {
+        return v.pin === i;
     });
 
+    var maxDuration = items.reduce(function (acc, val) {
+        var d = val.delay + val.duration - val.position;
+
+        if (d > acc)
+        	return d;
+        else
+        	return acc;
+    }, 0);
+
+    for (var j = 0, len = maxDuration; j <= len; j+= 10) {
+        values.push({'time': j, 'intensity': computeValue(j, items)});
+    }
+
+    console.log(values);
+  });
+
+  actuators.forEach(function (a, i) {
     if (a['values'].length == 0) {
         a['values'].push({
             'time': 0,
@@ -27236,7 +27272,9 @@ var data = vibes;
   actuator.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return z(d.id); });
+      .style("stroke", function(d) { return z(d.pin); })
+      .attr('stroke-width', 2)
+      .attr('fill', 'none');
 
   actuator.append("text")
       .datum(function(d) { return {pin: d.pin, value: d.values[d.values.length - 1]}; })
