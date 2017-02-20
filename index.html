@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="node_modules/material-design-lite/material.min.css">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-orange.min.css">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-orange.min.css">
   <link rel="stylesheet" href="dist/styles.css">
 </head>
 <body>
@@ -94,12 +94,12 @@ Run Code
       <!-- Title -->
       <span class="mdl-layout-title"><img src="dist/moment.png" alt="Moment"></span>
     </div>
-    <!-- Tabs -->
+    <!-- Tabs
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
       <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Simulator</a>
       <a href="#fixed-tab-2" class="mdl-layout__tab">Timeline</a>
       <a href="#fixed-tab-3" class="mdl-layout__tab">Console</a>
-    </div>
+    </div> -->
   </header>
 
   <div class="mdl-layout__drawer">
@@ -179,6 +179,14 @@ Run Code
               <span aria-hidden="true" class="animated-pulse-icon"><span class="fa fa-circle animated pulse4x infinite" id="top-left-actuator"></span></span>
               <span aria-hidden="true" class="animated-pulse-icon" id="center-led-container"><span class="fa fa-circle animated pulse4x infinite" id="center-led"></span></span>
           </div>
+          <div class="page-content">
+            <div id="actuator-graph">
+            <svg width="400" height="280" id="timeline-chart"></svg>
+            </div>
+          </div>
+      </div>
+    </section>
+    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
 
           <div id="actuator-bars">
               <div id="tl-bar" class="actuator-bar"></div>
@@ -186,15 +194,12 @@ Run Code
               <div id="bl-bar" class="actuator-bar"></div>
               <div id="br-bar" class="actuator-bar"></div>
           </div>
-      </div>
-    </section>
-    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
-      <div class="page-content">
-        <svg width="960" height="500" id="timeline-chart"></svg>
-      </div>
     </section>
     <section class="mdl-layout__tab-panel" id="fixed-tab-3">
-      <div class="page-content"><!-- Your content goes here --></div>
+      <div class="page-content">
+          <div id="repl-content">
+          </div>
+      </div>
     </section>
   </main>
 </div>
@@ -202,7 +207,10 @@ Run Code
 </div>
 
 <script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="dist/moment-sdk/dist/environment.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/init.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/led.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/haptics.js" type="text/javascript" charset="utf-8"></script>
+<script src="dist/moment-sdk/dist/device.js" type="text/javascript" charset="utf-8"></script>
 <script src="node_modules/material-design-lite/material.min.js"></script>
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script src="dist/bundle.js" type="text/javascript" charset="utf-8"></script>

@@ -26,7 +26,7 @@ body {
     top: 0;
     bottom: 0;
     right: 0;
-    left: 33%;
+    left: 400px;
 }
 
 #run-button {
@@ -35,12 +35,18 @@ body {
     right: 24px;
 }
 
+#repl-content {
+    overflow-y: scroll;
+    max-height: 400px;
+    font-family: 'Lucida Console', 'Monaco', monospaced;
+}
+
 #sidebar {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
-    right: 67%;
+    width: 400px;
     box-sizing: border-box;
 }
 
@@ -52,6 +58,15 @@ body {
     padding-top: 24px;
     box-sizing: border-box;
     text-align: center;
+}
+
+#actuator-graph {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 50%;
+    background: #ececec;
 }
 
 #actuator-bars {
