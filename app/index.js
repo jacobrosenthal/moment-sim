@@ -174,12 +174,23 @@ function onChange() {
 	store.set(TEXT_KEY, v);
 }
 
+var actuatorColors = [
+    "#91BD00",
+    "#fdaa00",
+    "#007eed",
+    "#850068"
+];
+
 function onRun() {
 	vibes = [];
 	$("#top-left-actuator").removeAttr('style');
 	$("#top-right-actuator").removeAttr('style');
 	$("#bottom-left-actuator").removeAttr('style');
 	$("#bottom-right-actuator").removeAttr('style');
+    $("#top-left-actuator").css('background-color', actuatorColors[0]);
+    $("#top-right-actuator").css('background-color', actuatorColors[1]);
+    $("#bottom-left-actuator").css('background-color', actuatorColors[2]);
+    $("#bottom-right-actuator").css('background-color', actuatorColors[3]);
 	$(".actuator-bar").removeAttr('style');
     if (currentLooper) window.clearInterval(currentLooper);
     $("#center-led")
@@ -298,10 +309,31 @@ var data = vibes;
 
   var actuators = [{}, {}, {}, {}];
 
+  var xDomain = [],
+      xExtent;
+  vibes.forEach(function (v) {
+    xDomain.push(v['delay']);
+    xDomain.push(v['delay'] + v['duration'] - v['position']);
+  });
+
+  xExtent = d3.extent(xDomain);
+  x.domain(xExtent);
+
+  var yDomain = [];
+  vibes.forEach(function (v) {
+    yDomain.push(v['start']);
+    yDomain.push(v['end']);
+  });
+
+  y.domain(d3.extent(yDomain));
+
+  z.domain([0, 1, 2, 3]);
+
   actuators.forEach(function (a, i) {
     a['pin'] = i;
     var values = [];
     a['values'] = values;
+    a['color'] = actuatorColors[i];
 
     var items = vibes.filter(function (v) {
         return v.pin === i;
@@ -324,31 +356,22 @@ var data = vibes;
   });
 
   actuators.forEach(function (a, i) {
-    if (a['values'].length == 0) {
+    var max = xExtent[1] / 10;
+    var t = a['values'].length * 10;
+    var v;
+
+    if (a['values'].length == 0)
+        v = 0;
+    else
+        v = a['values'][a['values'].length - 1].intensity;
+    while (a['values'].length < max) {
+        t += 10;
         a['values'].push({
-            'time': 0,
-            'intensity': 0
+            'time': t,
+            'intensity': v
         });
     }
   });
-
-  var xDomain = [];
-  vibes.forEach(function (v) {
-    xDomain.push(v['delay']);
-    xDomain.push(v['delay'] + v['duration'] - v['position']);
-  });
-
-  x.domain(d3.extent(xDomain));
-
-  var yDomain = [];
-  vibes.forEach(function (v) {
-    yDomain.push(v['start']);
-    yDomain.push(v['end']);
-  });
-
-  y.domain(d3.extent(yDomain));
-
-  z.domain([0, 1, 2, 3]);
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -373,26 +396,9 @@ var data = vibes;
   actuator.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return z(d.pin); })
+      .style("stroke", function(d) { return d.color; })
       .attr('stroke-width', 2)
       .attr('fill', 'none');
-
-  actuator.append("text")
-      .datum(function(d) { return {pin: d.pin, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { console.log(d); return "translate(" + x(d.value.time) + "," + y(d.value.intensity) + ")"; })
-      .attr("x", 3)
-      .attr("dy", "0.35em")
-      .style("font", "10px sans-serif")
-      .text(function(d) {
-            if (d.pin == 0)
-                return "Top Left";
-            else if (d.pin == 1)
-                return "Top Right";
-            else if (d.pin == 2)
-                return "Bottom Left";
-            else if (d.pin == 3)
-                return "Bottom Right";
-        });
 
 }
 
