@@ -27239,7 +27239,7 @@ var svg = __WEBPACK_IMPORTED_MODULE_1_d3__["select"]("svg"),
     height = svg.attr("height") - margin.top - margin.bottom,
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var x = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleTime"]().range([0, width]),
+var x = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().range([0, width]),
     y = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().range([height, 0]),
     z = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleOrdinal"](__WEBPACK_IMPORTED_MODULE_1_d3__["schemeCategory10"]);
 
