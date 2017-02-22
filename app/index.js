@@ -185,7 +185,12 @@ function onRun() {
 		var code = editor.getValue();
 		code = "(function (Moment) { " + code;
 		code = code + " })(Moment);";
-		eval(editor.getValue());
+
+
+        if (queryString.hasOwnProperty('gist'))
+            evalGist();
+        else
+		    eval(editor.getValue());
 
 		drawChart();
 	}, 100);
