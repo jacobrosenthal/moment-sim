@@ -27149,7 +27149,7 @@ function onRun() {
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor"></div>');
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
     }

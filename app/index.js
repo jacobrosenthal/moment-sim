@@ -205,7 +205,7 @@ function onRun() {
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         $("#editor").remove();
-        $("body").prepend('<div id="editor"></div>');
+        $("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
     }
