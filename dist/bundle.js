@@ -26950,6 +26950,25 @@ var vibes = [],
 	editor,
 	TEXT_KEY = "text";
 
+function evalGist() {
+  var gists = document.getElementsByClassName("gist-data");
+  for (var i = 0; i < gists.length; i++) {
+    var text = [];
+    var lines = gists[i].getElementsByClassName("line");
+    for (var l = 0; l < lines.length; l++)
+      text.push("textContent" in lines[l] ? lines[l].textContent : lines[l].innerText);
+    (eval(text.join('\n')))();
+  }
+}
+
+var queryString = {};
+location.search.substr(1).split("&").forEach(function (pair) {
+    if (pair === "") return;
+    var parts = pair.split("=");
+    queryString[parts[0]] = parts[1] &&
+        decodeURIComponent(parts[1].replace(/\+/g, " "));
+});
+
 function getPinEl(pin) {
 	if (pin === Moment.Actuators.topLeft.pin) {
 		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator");
@@ -27117,18 +27136,25 @@ function onRun() {
 }
 
 function onReady() {
-    editor = ace.edit("editor");
-    editor.setTheme("ace/theme/tomorrow");
-    editor.session.setMode("ace/mode/javascript");
-    editor.setShowInvisibles(true);
-    editor.setHighlightSelectedWord(true);
-
-    var v = __WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY);
-    if (v) {
-         editor.setValue(v);
-         editor.gotoLine(editor.session.getLength());
+    if (queryString.hasOwnProperty('gist')) {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor"></div>');
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").append('<script src="' + queryString.gist + '.js"></script>');
     }
-    editor.on('change', onChange);
+    else {
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setShowInvisibles(true);
+        editor.setHighlightSelectedWord(true);
+
+        var v = __WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY);
+        if (v) {
+             editor.setValue(v);
+             editor.gotoLine(editor.session.getLength());
+        }
+        editor.on('change', onChange);
+    }
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#run-button").on("click", onRun);
 
