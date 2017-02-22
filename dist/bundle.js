@@ -26951,15 +26951,21 @@ var vibes = [],
 	TEXT_KEY = "text";
 
 function evalGist() {
-  var gists = document.getElementsByClassName("gist-data");
-  for (var i = 0; i < gists.length; i++) {
-    var text = [];
-    var lines = gists[i].getElementsByClassName("line");
-    for (var l = 0; l < lines.length; l++)
-      text.push("textContent" in lines[l] ? lines[l].textContent : lines[l].innerText);
-    (eval(text.join('\n')))();
-  }
+  var gists = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(".gist-data");
+
+  var text = [];
+
+  gists.each(function () {
+      var self = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
+      self.find(".blob-code-inner").each(function () {
+          text.push(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).text());
+      });
+  });
+
+  return text.join('\n');
 }
+
+var useGist = false;
 
 var queryString = {};
 location.search.substr(1).split("&").forEach(function (pair) {
@@ -27126,15 +27132,15 @@ function onRun() {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("svg").empty();
 
 	window.setTimeout(function () {
-		var code = editor.getValue();
+        var code;
+
+        if (useGist)
+            code = evalGist();
+        else
+		    code = editor.getValue();
 		code = "(function (Moment) { " + code;
 		code = code + " })(Moment);";
-
-
-        if (queryString.hasOwnProperty('gist'))
-            evalGist();
-        else
-		    eval(editor.getValue());
+		eval(code);
 
 		drawChart();
 	}, 100);
@@ -27144,7 +27150,8 @@ function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor"></div>');
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").append('<script src="' + queryString.gist + '.js"></script>');
+        postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
+        useGist = true;
     }
     else {
         editor = ace.edit("editor");

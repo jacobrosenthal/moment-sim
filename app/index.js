@@ -7,15 +7,21 @@ var vibes = [],
 	TEXT_KEY = "text";
 
 function evalGist() {
-  var gists = document.getElementsByClassName("gist-data");
-  for (var i = 0; i < gists.length; i++) {
-    var text = [];
-    var lines = gists[i].getElementsByClassName("line");
-    for (var l = 0; l < lines.length; l++)
-      text.push("textContent" in lines[l] ? lines[l].textContent : lines[l].innerText);
-    (eval(text.join('\n')))();
-  }
+  var gists = $(".gist-data");
+
+  var text = [];
+
+  gists.each(function () {
+      var self = $(this);
+      self.find(".blob-code-inner").each(function () {
+          text.push($(this).text());
+      });
+  });
+
+  return text.join('\n');
 }
+
+var useGist = false;
 
 var queryString = {};
 location.search.substr(1).split("&").forEach(function (pair) {
@@ -182,15 +188,15 @@ function onRun() {
     $("svg").empty();
 
 	window.setTimeout(function () {
-		var code = editor.getValue();
+        var code;
+
+        if (useGist)
+            code = evalGist();
+        else
+		    code = editor.getValue();
 		code = "(function (Moment) { " + code;
 		code = code + " })(Moment);";
-
-
-        if (queryString.hasOwnProperty('gist'))
-            evalGist();
-        else
-		    eval(editor.getValue());
+		eval(code);
 
 		drawChart();
 	}, 100);
@@ -200,7 +206,8 @@ function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         $("#editor").remove();
         $("body").prepend('<div id="editor"></div>');
-        $("#editor").append('<script src="' + queryString.gist + '.js"></script>');
+        postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
+        useGist = true;
     }
     else {
         editor = ace.edit("editor");
