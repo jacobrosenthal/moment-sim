@@ -383,7 +383,16 @@ var data = vibes;
       .attr("x", 3)
       .attr("dy", "0.35em")
       .style("font", "10px sans-serif")
-      .text(function(d) { return d.pin; });
+      .text(function(d) {
+            if (d.pin == 0)
+                return "Top Left";
+            else if (d.pin == 1)
+                return "Top Right";
+            else if (d.pin == 2)
+                return "Bottom Left";
+            else if (d.pin == 3)
+                return "Bottom Right";
+        });
 
 }
 
