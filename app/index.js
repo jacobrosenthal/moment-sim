@@ -156,6 +156,10 @@ function onRun() {
 	$("#bottom-left-actuator").removeAttr('style');
 	$("#bottom-right-actuator").removeAttr('style');
 	$(".actuator-bar").removeAttr('style');
+    $("#center-led")
+        .css('transition-duration', '')
+        .css('background-color', '#000');
+    $("svg").empty();
 
 	window.setTimeout(function () {
 		var code = editor.getValue();

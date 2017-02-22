@@ -27100,6 +27100,10 @@ function onRun() {
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").removeAttr('style');
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").removeAttr('style');
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").removeAttr('style');
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
+        .css('transition-duration', '')
+        .css('background-color', '#000');
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("svg").empty();
 
 	window.setTimeout(function () {
 		var code = editor.getValue();
@@ -27276,10 +27280,7 @@ var data = vibes;
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) { return z(d.pin); })
       .attr('stroke-width', 2)
-      .attr('fill', 'none')
-      .transition()
-        .duration(2000)
-        .ease("linear");
+      .attr('fill', 'none');
 
   actuator.append("text")
       .datum(function(d) { return {pin: d.pin, value: d.values[d.values.length - 1]}; })
