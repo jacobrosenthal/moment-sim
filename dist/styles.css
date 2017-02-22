@@ -150,5 +150,5 @@ body {
     height: 20px;
     border-radius: 10px;
     background: black;
-    filter: blur(3px);
+    filter: blur(2px);
 }
