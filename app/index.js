@@ -156,6 +156,7 @@ function onRun() {
 	$("#bottom-left-actuator").removeAttr('style');
 	$("#bottom-right-actuator").removeAttr('style');
 	$(".actuator-bar").removeAttr('style');
+    if (currentLooper) window.clearInterval(currentLooper);
     $("#center-led")
         .css('transition-duration', '')
         .css('background-color', '#000');

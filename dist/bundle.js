@@ -27100,6 +27100,7 @@ function onRun() {
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").removeAttr('style');
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").removeAttr('style');
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").removeAttr('style');
+    if (currentLooper) window.clearInterval(currentLooper);
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
         .css('transition-duration', '')
         .css('background-color', '#000');
