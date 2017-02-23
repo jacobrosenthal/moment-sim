@@ -27173,6 +27173,9 @@ function onReady() {
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
+
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").show();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
     }
     else {
         editor = ace.edit("editor");
@@ -27216,6 +27219,50 @@ function onReady() {
     })();
 
     drawChart();
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste blur submit click", function () {
+        var val = this.value.replace(/\s/g, '');
+        if (val.length == 0)
+            return;
+
+        location.hash = "#gist=" + val;
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading GitHub Gist..."
+        });
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
+        postscribe('#editor', '<script src="' + val + '.js"></script>');
+        useGist = true;
+
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").show();
+    });
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch").on("change", function () {
+        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).is(":checked") ) {
+            document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+                'message': "Loading Moment editor..."
+            });
+            var v = evalGist();
+            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<pre id="editor"></pre>');
+            location.hash = "";
+            useGist = false;
+            editor = ace.edit("editor");
+            editor.setTheme("ace/theme/tomorrow");
+            editor.session.setMode("ace/mode/javascript");
+            editor.setShowInvisibles(true);
+            editor.setHighlightSelectedWord(true);
+
+            if (v) {
+                 editor.setValue(v);
+                 editor.gotoLine(editor.session.getLength());
+            }
+            editor.on('change', onChange);
+            this.parentNode.MaterialSwitch.off();
+            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").hide();
+            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val('');
+        }
+    });
 }
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
@@ -27284,10 +27331,6 @@ var sparkIds = ["#tl-spark", "#tr-spark", "#bl-spark", "#br-spark"];
 
 function drawChart() {
     var actuators = [{}, {}, {}, {}];
-
-    sparkIds.forEach(function (id) {
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(id).css('border-top', '#ddd 2px dotted');
-    });
 
     actuators.forEach(function (a, i) {
         a['pin'] = i;

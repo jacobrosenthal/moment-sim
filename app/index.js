@@ -229,6 +229,9 @@ function onReady() {
         $("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
+
+        $("#editor-switch-container").show();
+        $("#gist-url").val(queryString.gist);
     }
     else {
         editor = ace.edit("editor");
@@ -272,6 +275,50 @@ function onReady() {
     })();
 
     drawChart();
+
+    $("#gist-url").on("paste blur submit click", function () {
+        var val = this.value.replace(/\s/g, '');
+        if (val.length == 0)
+            return;
+
+        location.hash = "#gist=" + val;
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading GitHub Gist..."
+        });
+        $("#editor").remove();
+        $("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
+        postscribe('#editor', '<script src="' + val + '.js"></script>');
+        useGist = true;
+
+        $("#editor-switch-container").show();
+    });
+
+    $("#editor-switch").on("change", function () {
+        if ($(this).is(":checked") ) {
+            document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+                'message': "Loading Moment editor..."
+            });
+            var v = evalGist();
+            $("#editor").remove();
+            $("body").prepend('<pre id="editor"></pre>');
+            location.hash = "";
+            useGist = false;
+            editor = ace.edit("editor");
+            editor.setTheme("ace/theme/tomorrow");
+            editor.session.setMode("ace/mode/javascript");
+            editor.setShowInvisibles(true);
+            editor.setHighlightSelectedWord(true);
+
+            if (v) {
+                 editor.setValue(v);
+                 editor.gotoLine(editor.session.getLength());
+            }
+            editor.on('change', onChange);
+            this.parentNode.MaterialSwitch.off();
+            $("#editor-switch-container").hide();
+            $("#gist-url").val('');
+        }
+    });
 }
 
 $(document).ready(onReady);
@@ -340,10 +387,6 @@ var sparkIds = ["#tl-spark", "#tr-spark", "#bl-spark", "#br-spark"];
 
 function drawChart() {
     var actuators = [{}, {}, {}, {}];
-
-    sparkIds.forEach(function (id) {
-        $(id).css('border-top', '#ddd 2px dotted');
-    });
 
     actuators.forEach(function (a, i) {
         a['pin'] = i;
