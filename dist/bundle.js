@@ -27282,7 +27282,7 @@ function getIntensity(t, v) {
 	return intensity;
 }
 
-function computeValue(t, items) {
+function computeValue(t, items, previous) {
 	var v;
 	for (var i = 0, len = items.length; i < len; i++) {
 		v = items[i];
@@ -27290,7 +27290,7 @@ function computeValue(t, items) {
 			return getIntensity(t, v);
 		}
 	}
-	return 0;
+	return previous;
 }
 
 function drawSpark(id, data, color) {
@@ -27336,6 +27336,7 @@ function drawChart() {
     var actuators = [{}, {}, {}, {}];
 
     actuators.forEach(function (a, i) {
+        var next = 0, previous = 0;
         a['pin'] = i;
         a['sparkid'] = sparkIds[i];
         var values = [];
@@ -27357,10 +27358,12 @@ function drawChart() {
         }, 0);
 
         for (var j = 0, len = maxDuration; j <= len; j+= 10) {
-            values.push({'time': j, 'intensity': computeValue(j, items)});
-            values.push({'time': j, 'intensity': computeValue(j, items)});
-            values.push({'time': j, 'intensity': computeValue(j, items)});
-            values.push({'time': j, 'intensity': computeValue(j, items)});
+            next = computeValue(j, items, previous);
+            values.push({'time': j, 'intensity': next});
+            values.push({'time': j, 'intensity': next});
+            values.push({'time': j, 'intensity': next});
+            values.push({'time': j, 'intensity': next});
+            previous = next;
         }
     });
 
