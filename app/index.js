@@ -223,6 +223,12 @@ function onRun() {
 	}, 100);
 }
 
+function onFocus() {
+    if ($(".mdl-layout__drawer.is-visible").length > 0) {
+        document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
+    }
+}
+
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
@@ -242,6 +248,7 @@ function onReady() {
         editor.session.setMode("ace/mode/javascript");
         editor.setShowInvisibles(true);
         editor.setHighlightSelectedWord(true);
+        editor.on('focus', onFocus);
 
         var v = store.get(TEXT_KEY);
         if (v) {
@@ -294,6 +301,7 @@ function onReady() {
         useGist = true;
 
         $("#edit-button").show();
+        document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     });
 
     $("#gist-url").on("keydown", function (e) {
@@ -314,6 +322,7 @@ function onReady() {
         editor.session.setMode("ace/mode/javascript");
         editor.setShowInvisibles(true);
         editor.setHighlightSelectedWord(true);
+        editor.on('focus', onFocus);
 
         if (v) {
              editor.setValue(v);

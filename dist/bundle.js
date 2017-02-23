@@ -27167,6 +27167,12 @@ function onRun() {
 	}, 100);
 }
 
+function onFocus() {
+    if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".mdl-layout__drawer.is-visible").length > 0) {
+        document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
+    }
+}
+
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
@@ -27186,6 +27192,7 @@ function onReady() {
         editor.session.setMode("ace/mode/javascript");
         editor.setShowInvisibles(true);
         editor.setHighlightSelectedWord(true);
+        editor.on('focus', onFocus);
 
         var v = __WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY);
         if (v) {
@@ -27238,6 +27245,7 @@ function onReady() {
         useGist = true;
 
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
+        document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     });
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("keydown", function (e) {
@@ -27258,6 +27266,7 @@ function onReady() {
         editor.session.setMode("ace/mode/javascript");
         editor.setShowInvisibles(true);
         editor.setHighlightSelectedWord(true);
+        editor.on('focus', onFocus);
 
         if (v) {
              editor.setValue(v);
