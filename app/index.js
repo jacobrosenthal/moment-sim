@@ -414,6 +414,9 @@ function drawChart() {
 
         for (var j = 0, len = maxDuration; j <= len; j+= 10) {
             values.push({'time': j, 'intensity': computeValue(j, items)});
+            values.push({'time': j, 'intensity': computeValue(j, items)});
+            values.push({'time': j, 'intensity': computeValue(j, items)});
+            values.push({'time': j, 'intensity': computeValue(j, items)});
         }
     });
 
