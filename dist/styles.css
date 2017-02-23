@@ -54,6 +54,14 @@ body {
     overflow-y: hidden;
 }
 
+#sidebar header {
+    background: #060606;
+}
+
+#sidebar header i {
+    color: #fff;
+}
+
 #simulator-tab {
     padding-top: 24px;
     box-sizing: border-box;
@@ -66,7 +74,6 @@ body {
     left: 0;
     right: 0;
     top: 50%;
-    background: #ececec;
 }
 
 #actuator-bars {
