@@ -27177,7 +27177,7 @@ function onReady() {
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
 
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").show();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
     }
     else {
@@ -27223,7 +27223,7 @@ function onReady() {
 
     drawChart();
 
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste blur submit click", function () {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste blur submit", function () {
         var val = this.value.replace(/\s/g, '');
         if (val.length == 0)
             return;
@@ -27237,34 +27237,35 @@ function onReady() {
         postscribe('#editor', '<script src="' + val + '.js"></script>');
         useGist = true;
 
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").show();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
     });
 
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch").on("change", function () {
-        if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).is(":checked") ) {
-            document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
-                'message': "Loading Moment editor..."
-            });
-            var v = evalGist();
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<pre id="editor"></pre>');
-            location.hash = "";
-            useGist = false;
-            editor = ace.edit("editor");
-            editor.setTheme("ace/theme/tomorrow");
-            editor.session.setMode("ace/mode/javascript");
-            editor.setShowInvisibles(true);
-            editor.setHighlightSelectedWord(true);
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("keydown", function (e) {
+        if (e.which == 13) __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).trigger("paste");
+    });
 
-            if (v) {
-                 editor.setValue(v);
-                 editor.gotoLine(editor.session.getLength());
-            }
-            editor.on('change', onChange);
-            this.parentNode.MaterialSwitch.off();
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor-switch-container").hide();
-            __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val('');
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").on("click", function () {
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading Moment editor..."
+        });
+        var v = evalGist();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<pre id="editor"></pre>');
+        location.hash = "";
+        useGist = false;
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setShowInvisibles(true);
+        editor.setHighlightSelectedWord(true);
+
+        if (v) {
+             editor.setValue(v);
+             editor.gotoLine(editor.session.getLength());
         }
+        editor.on('change', onChange);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").hide();
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val('');
     });
 }
 

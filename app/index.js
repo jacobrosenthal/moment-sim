@@ -233,7 +233,7 @@ function onReady() {
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
         useGist = true;
 
-        $("#editor-switch-container").show();
+        $("#edit-button").show();
         $("#gist-url").val(queryString.gist);
     }
     else {
@@ -279,7 +279,7 @@ function onReady() {
 
     drawChart();
 
-    $("#gist-url").on("paste blur submit click", function () {
+    $("#gist-url").on("paste blur submit", function () {
         var val = this.value.replace(/\s/g, '');
         if (val.length == 0)
             return;
@@ -293,38 +293,35 @@ function onReady() {
         postscribe('#editor', '<script src="' + val + '.js"></script>');
         useGist = true;
 
-        $("#editor-switch-container").show();
+        $("#edit-button").show();
     });
 
     $("#gist-url").on("keydown", function (e) {
         if (e.which == 13) $(this).trigger("paste");
     });
 
-    $("#editor-switch").on("change", function () {
-        if ($(this).is(":checked") ) {
-            document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
-                'message': "Loading Moment editor..."
-            });
-            var v = evalGist();
-            $("#editor").remove();
-            $("body").prepend('<pre id="editor"></pre>');
-            location.hash = "";
-            useGist = false;
-            editor = ace.edit("editor");
-            editor.setTheme("ace/theme/tomorrow");
-            editor.session.setMode("ace/mode/javascript");
-            editor.setShowInvisibles(true);
-            editor.setHighlightSelectedWord(true);
+    $("#edit-button").on("click", function () {
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading Moment editor..."
+        });
+        var v = evalGist();
+        $("#editor").remove();
+        $("body").prepend('<pre id="editor"></pre>');
+        location.hash = "";
+        useGist = false;
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setShowInvisibles(true);
+        editor.setHighlightSelectedWord(true);
 
-            if (v) {
-                 editor.setValue(v);
-                 editor.gotoLine(editor.session.getLength());
-            }
-            editor.on('change', onChange);
-            this.parentNode.MaterialSwitch.off();
-            $("#editor-switch-container").hide();
-            $("#gist-url").val('');
+        if (v) {
+             editor.setValue(v);
+             editor.gotoLine(editor.session.getLength());
         }
+        editor.on('change', onChange);
+        $("#edit-button").hide();
+        $("#gist-url").val('');
     });
 }
 

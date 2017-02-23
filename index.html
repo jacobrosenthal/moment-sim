@@ -81,8 +81,16 @@ Moment.LED.loopColor(orangeTransition, greenTransition);</pre>
   <i class="material-icons">play_arrow</i>
 </button>
 
-<div class="mdl-tooltip mdl-tooltip--top" for="run-button">
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="edit-button">
+  <i class="material-icons">edit</i>
+</button>
+
+<div class="mdl-tooltip mdl-tooltip--left" for="run-button">
 Run Code
+</div>
+
+<div class="mdl-tooltip mdl-tooltip--left" for="edit-button">
+Edit Code
 </div>
 
 <div id="sidebar">
@@ -164,18 +172,6 @@ Run Code
                 <span class="mdl-list__item-secondary-action">
                     <label for="vim-switch" class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
                       <input type="checkbox" id="vim-switch" class="mdl-switch__input">
-                    </label>
-                </span>
-            </li>
-
-            <li class="mdl-list__item" id="editor-switch-container" style="display: none;">
-                <span class="mdl-list__item-primary-content">
-                    Edit Gist
-                </span>
-
-                <span class="mdl-list__item-secondary-action">
-                    <label for="editor-switch" class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
-                      <input type="checkbox" id="editor-switch" class="mdl-switch__input">
                     </label>
                 </span>
             </li>

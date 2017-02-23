@@ -36,6 +36,14 @@ body {
     z-index: 9999;
 }
 
+#edit-button {
+    position: absolute;
+    bottom: 96px;
+    right: 24px;
+    z-index: 9999;
+    display: none;
+}
+
 #repl-content {
     overflow-y: scroll;
     max-height: 400px;
