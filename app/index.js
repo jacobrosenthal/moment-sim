@@ -114,7 +114,7 @@ Moment['_loop_led_color'] = function (r, g, b, func, duration) {
 		startLoop();
 		var fn = $("#center-led").data('last-tween');
 
-		window.setTimeout(fn, fn.duration);
+		window.setTimeout(fn, duration);
 	}
 
 	currentLooper = window.setInterval(runLoop, duration + $("#center-led").data('last-tween').duration);

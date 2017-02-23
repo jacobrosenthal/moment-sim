@@ -27058,7 +27058,7 @@ Moment['_loop_led_color'] = function (r, g, b, func, duration) {
 		startLoop();
 		var fn = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween');
 
-		window.setTimeout(fn, fn.duration);
+		window.setTimeout(fn, duration);
 	}
 
 	currentLooper = window.setInterval(runLoop, duration + __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween').duration);
