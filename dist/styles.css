@@ -58,6 +58,14 @@ body {
     background: #060606;
 }
 
+#sidebar header .mdl-layout__header-row {
+    justify-content: center;
+}
+
+#sidebar header img {
+    padding-right: 64px;
+}
+
 #sidebar header i {
     color: #fff;
 }
