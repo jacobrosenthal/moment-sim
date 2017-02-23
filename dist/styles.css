@@ -71,6 +71,10 @@ body {
     color: #fff;
 }
 
+#toaster-popup {
+    z-index: 9999;
+}
+
 #simulator-tab {
     padding-top: 24px;
     box-sizing: border-box;
