@@ -26968,7 +26968,7 @@ function evalGist() {
 var useGist = false;
 
 var queryString = {};
-location.search.substr(1).split("&").forEach(function (pair) {
+location.hash.split("&").forEach(function (pair) {
     if (pair === "") return;
     var parts = pair.split("=");
     queryString[parts[0]] = parts[1] &&
