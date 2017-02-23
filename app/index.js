@@ -296,6 +296,10 @@ function onReady() {
         $("#editor-switch-container").show();
     });
 
+    $("#gist-url").on("keydown", function (e) {
+        if (e.which == 13) $(this).trigger("paste");
+    });
+
     $("#editor-switch").on("change", function () {
         if ($(this).is(":checked") ) {
             document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
