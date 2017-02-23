@@ -24,7 +24,7 @@ function evalGist() {
 var useGist = false;
 
 var queryString = {};
-location.hash.split("&").forEach(function (pair) {
+location.hash.replace('#', '').split("&").forEach(function (pair) {
     if (pair === "") return;
     var parts = pair.split("=");
     queryString[parts[0]] = parts[1] &&
