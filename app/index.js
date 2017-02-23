@@ -201,6 +201,10 @@ function onRun() {
         .css('background-color', '#000');
     $("svg").empty();
 
+    document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+        'message': "Running JavaScript code..."
+    });
+
 	window.setTimeout(function () {
         var code;
 
@@ -218,6 +222,9 @@ function onRun() {
 
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading GitHub Gist..."
+        });
         $("#editor").remove();
         $("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
         postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
