@@ -72,7 +72,7 @@ Moment.clearInterval = window.clearInterval;
 
 var currentLooper = false;
 var currentGraphInterval = false;
-var centiSeconds = 175; // hundredths of seconds in chart
+var centiSeconds = 200; // hundredths of seconds in chart
 
 Moment.LED.setColor = function(color) {
 	if (currentLooper) window.clearInterval(currentLooper);
@@ -95,7 +95,8 @@ Moment['_tween_led_color'] = function (r, g, b, func, duration) {
 	startTween.duration = duration;
 
 	$("#center-led").data('last-tween', startTween);
-	startTween();
+
+    window.setTimeout(startTween, centiSeconds * 5);
 }
 
 Moment['_loop_led_color'] = function (r, g, b, func, duration) {
@@ -119,7 +120,9 @@ Moment['_loop_led_color'] = function (r, g, b, func, duration) {
 		window.setTimeout(fn, duration);
 	}
 
-	currentLooper = window.setInterval(runLoop, duration + $("#center-led").data('last-tween').duration);
+    window.setTimeout(function () {
+        currentLooper = window.setInterval(runLoop, duration + $("#center-led").data('last-tween').duration);
+    }, centiSeconds * 5);
 }
 
 Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
@@ -167,7 +170,7 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 		}, 5);
 	}
 
-	window.setTimeout(executeTransition, delay);
+	window.setTimeout(executeTransition, delay + centiSeconds * 5);
 
 };
 
@@ -461,122 +464,6 @@ function drawChart() {
     }
     currentGraphInterval = window.setInterval(drawSparks, 10);
 }
-
-function drawChartOld() {
-
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = svg.attr("width") - margin.left - margin.right,
-    height = svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var x = d3.scaleTime().range([0, width]),
-    y = d3.scaleLinear().range([height, 0]),
-    z = d3.scaleOrdinal(d3.schemeCategory10);
-
-var line = d3.line()
-    .curve(d3.curveBasis)
-    .x(function(d) { return x(d.time); })
-    .y(function(d) { return y(d.intensity); });
-
-
-var data = vibes;
-
-  var actuators = [{}, {}, {}, {}];
-
-  var xDomain = [],
-      xExtent;
-  vibes.forEach(function (v) {
-    xDomain.push(v['delay']);
-    xDomain.push(v['delay'] + v['duration'] - v['position']);
-  });
-
-  xExtent = d3.extent(xDomain);
-  x.domain(xExtent);
-
-  var yDomain = [];
-  vibes.forEach(function (v) {
-    yDomain.push(v['start']);
-    yDomain.push(v['end']);
-  });
-
-  y.domain(d3.extent(yDomain));
-
-  z.domain([0, 1, 2, 3]);
-
-  actuators.forEach(function (a, i) {
-    a['pin'] = i;
-    var values = [];
-    a['values'] = values;
-    a['color'] = actuatorColors[i];
-
-    var items = vibes.filter(function (v) {
-        return v.pin === i;
-    });
-
-    var maxDuration = items.reduce(function (acc, val) {
-        var d = val.delay + val.duration - val.position;
-
-        if (d > acc)
-        	return d;
-        else
-        	return acc;
-    }, 0);
-
-    for (var j = 0, len = maxDuration; j <= len; j+= 10) {
-        values.push({'time': j, 'intensity': computeValue(j, items)});
-    }
-
-    console.log(values);
-  });
-
-  actuators.forEach(function (a, i) {
-    var max = xExtent[1] / 10;
-    var t = a['values'].length * 10;
-    var v;
-
-    if (a['values'].length == 0)
-        v = 0;
-    else
-        v = a['values'][a['values'].length - 1].intensity;
-    while (a['values'].length < max) {
-        t += 10;
-        a['values'].push({
-            'time': t,
-            'intensity': v
-        });
-    }
-  });
-
-  g.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
-
-  g.append("g")
-      .attr("class", "axis axis--y")
-      .call(d3.axisLeft(y))
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("fill", "#000")
-      .text("Intensity, %");
-
-  var actuator = g.selectAll(".actuator")
-    .data(actuators)
-    .enter().append("g")
-      .attr("class", "actuator");
-
-  actuator.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return d.color; })
-      .attr('stroke-width', 2)
-      .attr('fill', 'none');
-
-}
-
 
 (function () {
 
