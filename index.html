@@ -13,69 +13,7 @@
 </head>
 <body>
 
-<pre id="editor">var Timeline = Moment.Timeline,
-    Effect = Moment.Effect,
-    Vibration = Moment.Vibration;
-
-var quickPulse = new Effect(
-    0, // start at zero intensity (actuator off)
-    75, // end at 75% intensity
-    Moment.Easing.Exponential.in, // ease in with exponential curve
-    500 // exponential transition lasts 500ms
-);
-
-var tlPulse = new Vibration(
-    Moment.Actuators.topLeft, // select top left actuator
-    quickPulse, // use the 500ms exponential ease in effect
-    0 // begin immediately after tlPulse.start() is called
-);
-
-var quickIn = new Effect(
-    25, // start at 25% intensity
-    75, // end at 75% intensity
-    Moment.Easing.Quadratic.in, // ease in with quadratic curve
-    400, // quadratic transition lasts 400ms
-    100 // begin 100ms into the quadratic transition (only 300ms of easing)
-);
-
-var blIn = new Vibration(
-    Moment.Actuators.bottomLeft, // select bottom left actuator
-    quickIn, // use the 400ms quadratic ease in effect
-    2000 // begin effect 200ms after blIn.start() is called
-);
-
-var fadeOut = new Effect(
-    75, // start at 75% intensity
-    25, // end at 25% intensity
-    Moment.Easing.Linear.out, // ease out with linear curve
-    750 // linear transition lasts 750ms
-);
-
-var trFade = new Vibration(
-    Moment.Actuators.topRight, // select top right actuator
-    fadeOut, // use the 750ms exponential fade out effect
-    1500 // begin effect after 100ms
-);
-
-var timeline = new Timeline([tlPulse, blIn, trFade]);
-
-timeline.start();
-
-// loop between a 500ms quadratic transition to an orange color
-// and a 100ms inverse exponential transition to a green color
-var orangeTransition = new Moment.LED.Transition(
-    new Moment.Color(0xff, 0x99, 0x33),
-    Moment.Easing.Quadratic.in,
-    500
-);
-
-var greenTransition = new Moment.LED.Transition(
-    new Moment.Color(0x00, 0x88, 0x11),
-    Moment.Easing.Exponential.out,
-    100
-);
-
-Moment.LED.loopColor(orangeTransition, greenTransition);</pre>
+<pre id="editor"></pre>
 
 <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" id="run-button">
   <i class="material-icons">play_arrow</i>
