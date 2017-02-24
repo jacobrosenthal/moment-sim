@@ -27245,7 +27245,8 @@ function onReady() {
     drawChart();
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste submit", function () {
-        this.blur();
+        var self = this;
+        window.setTimeout(function () { self.blur(); }, 10);
     })
     .on("blur", function () {
         var val = this.value.replace(/\s/g, '');

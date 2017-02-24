@@ -301,7 +301,8 @@ function onReady() {
     drawChart();
 
     $("#gist-url").on("paste submit", function () {
-        this.blur();
+        var self = this;
+        window.setTimeout(function () { self.blur(); }, 10);
     })
     .on("blur", function () {
         var val = this.value.replace(/\s/g, '');
