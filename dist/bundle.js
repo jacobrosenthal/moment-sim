@@ -26954,7 +26954,7 @@ function Editor(value) {
 Editor.prototype.TEXT_KEY = "text";
 Editor.prototype.EDITOR_ID = "editor";
 
-Editor.prototype.loadAce = function (value) {
+Editor.prototype.loadAce = function (v) {
     var editor = ace.edit(this.EDITOR_ID);
     editor.setTheme("ace/theme/tomorrow");
     editor.session.setMode("ace/mode/javascript");
@@ -26969,26 +26969,43 @@ Editor.prototype.loadAce = function (value) {
 
     editor.on('change', onChange);
     this.editor = editor;
+};
+
+function Gist(url) {
+    document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+        'message': "Loading GitHub Gist..."
+    });
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
+    postscribe('#editor', '<script src="' + url + '.js"></script>');
+    useGist = true;
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(url);
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
 }
+
+Gist.prototype.getText = function () {
+    var gists = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(".gist-data");
+
+    var text = [];
+
+    gists.each(function () {
+        var self = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
+        self.find(".blob-code-inner").each(function () {
+            text.push(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).text());
+        });
+    });
+
+    return text.join('\n');
+};
+
+var currentEditor = false,
+    currentGist = false;
 
 var vibes = [],
 	editor,
 	TEXT_KEY = "text";
-
-function evalGist() {
-  var gists = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(".gist-data");
-
-  var text = [];
-
-  gists.each(function () {
-      var self = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
-      self.find(".blob-code-inner").each(function () {
-          text.push(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).text());
-      });
-  });
-
-  return text.join('\n');
-}
 
 var useGist = false;
 
@@ -27186,8 +27203,8 @@ function onRun() {
 	window.setTimeout(function () {
         var code;
 
-        if (useGist)
-            code = evalGist();
+        if (currentGist)
+            code = currentGist.getText();
         else
 		    code = editor.getValue();
 		code = "(function (Moment) { " + code;
@@ -27204,26 +27221,12 @@ function onFocus() {
     }
 }
 
-function loadGist() {
-    document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
-        'message': "Loading GitHub Gist..."
-    });
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
-    postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
-    useGist = true;
-
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
-}
-
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
-        loadGist();
+        currentGist = new Gist(queryString.gist);
     }
     else {
-        new Editor(__WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY));
+        currentEditor = new Editor(__WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY));
     }
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#run-button").on("click", onRun);
@@ -27284,14 +27287,15 @@ function onReady() {
         document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
             'message': "Loading Moment editor..."
         });
-        var v = evalGist();
+        var v = currentGist.getText();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<pre id="editor"></pre>');
         location.hash = "";
         useGist = false;
         editor = ace.edit("editor");
 
-        new Editor(v);
+        currentEditor = new Editor(v);
+        currentGist = false;
 
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").hide();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val('');
@@ -27300,7 +27304,7 @@ function onReady() {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on("hashchange", function () {
         loadQueryString();
         if (queryString.hasOwnProperty('gist')) {
-            loadGist();
+            currentGist = new Gist(queryString.gist);
         }
         else {
 
