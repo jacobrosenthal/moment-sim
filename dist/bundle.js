@@ -27141,6 +27141,16 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 		'delay': delay
 	});
 
+    console.log({
+        'pin': pin,
+        'start': start,
+        'end': end,
+        'func': func,
+        'duration': duration,
+        'position': position,
+        'delay': delay
+    });
+
 	var pinEl = getPinEl(pin),
 		barEl = getBarEl(pin);
 
