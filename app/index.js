@@ -56,6 +56,21 @@ Gist.prototype.getText = function () {
     return text.join('\n');
 };
 
+Gist.getHashParam = function () {
+    var queryString = {};
+    location.hash.replace('#', '').split("&").forEach(function (pair) {
+        if (pair === "") return;
+        var parts = pair.split("=");
+        queryString[parts[0]] = parts[1] &&
+            decodeURIComponent(parts[1].replace(/\+/g, " "));
+    });
+
+    if (queryString.hasOwnProperty('gist'))
+        return queryString.gist;
+    else
+        return false;
+};
+
 var currentEditor = false,
     currentGist = false;
 
@@ -64,20 +79,6 @@ var vibes = [],
 	TEXT_KEY = "text";
 
 var useGist = false;
-
-var queryString = {};
-
-function loadQueryString() {
-    queryString = {};
-    location.hash.replace('#', '').split("&").forEach(function (pair) {
-        if (pair === "") return;
-        var parts = pair.split("=");
-        queryString[parts[0]] = parts[1] &&
-            decodeURIComponent(parts[1].replace(/\+/g, " "));
-    });
-}
-
-loadQueryString();
 
 function getPinEl(pin) {
 	if (pin === Moment.Actuators.topLeft.pin) {
@@ -278,8 +279,9 @@ function onFocus() {
 }
 
 function onReady() {
-    if (queryString.hasOwnProperty('gist')) {
-        currentGist = new Gist(queryString.gist);
+    var gistUrl = Gist.getHashParam();
+    if (gistUrl) {
+        currentGist = new Gist(gistUrl);
     }
     else {
         currentEditor = new Editor(store.get(TEXT_KEY));
@@ -358,9 +360,9 @@ function onReady() {
     });
 
     $(window).on("hashchange", function () {
-        loadQueryString();
-        if (queryString.hasOwnProperty('gist')) {
-            currentGist = new Gist(queryString.gist);
+        var gistUrl = Gist.getHashParam();
+        if (gistUrl) {
+            currentGist = new Gist(gistUrl);
         }
         else {
 
