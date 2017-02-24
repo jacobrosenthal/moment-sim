@@ -79,6 +79,10 @@ body {
     color: #fff;
 }
 
+#sidebar .mdl-menu li a {
+    text-decoration: none;
+}
+
 #toaster-popup {
     z-index: 9999;
 }

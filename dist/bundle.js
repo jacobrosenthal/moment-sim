@@ -26968,12 +26968,18 @@ function evalGist() {
 var useGist = false;
 
 var queryString = {};
-location.hash.replace('#', '').split("&").forEach(function (pair) {
-    if (pair === "") return;
-    var parts = pair.split("=");
-    queryString[parts[0]] = parts[1] &&
-        decodeURIComponent(parts[1].replace(/\+/g, " "));
-});
+
+function loadQueryString() {
+    queryString = {};
+    location.hash.replace('#', '').split("&").forEach(function (pair) {
+        if (pair === "") return;
+        var parts = pair.split("=");
+        queryString[parts[0]] = parts[1] &&
+            decodeURIComponent(parts[1].replace(/\+/g, " "));
+    });
+}
+
+loadQueryString();
 
 function getPinEl(pin) {
 	if (pin === Moment.Actuators.topLeft.pin) {
@@ -27173,34 +27179,41 @@ function onFocus() {
     }
 }
 
+function loadGist() {
+    document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+        'message': "Loading GitHub Gist..."
+    });
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
+    postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
+    useGist = true;
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
+}
+
+function loadAce(v) {
+    editor = ace.edit("editor");
+    editor.setTheme("ace/theme/tomorrow");
+    editor.session.setMode("ace/mode/javascript");
+    editor.setShowInvisibles(true);
+    editor.setHighlightSelectedWord(true);
+    editor.on('focus', onFocus);
+
+    if (v) {
+         editor.setValue(v);
+         editor.gotoLine(editor.session.getLength());
+    }
+    editor.on('change', onChange);
+}
+
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
-        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
-            'message': "Loading GitHub Gist..."
-        });
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
-        postscribe('#editor', '<script src="' + queryString.gist + '.js"></script>');
-        useGist = true;
-
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
-        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
+        loadGist();
     }
     else {
-        editor = ace.edit("editor");
-        editor.setTheme("ace/theme/tomorrow");
-        editor.session.setMode("ace/mode/javascript");
-        editor.setShowInvisibles(true);
-        editor.setHighlightSelectedWord(true);
-        editor.on('focus', onFocus);
-
-        var v = __WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY);
-        if (v) {
-             editor.setValue(v);
-             editor.gotoLine(editor.session.getLength());
-        }
-        editor.on('change', onChange);
+        loadAce(__WEBPACK_IMPORTED_MODULE_2_store___default.a.get(TEXT_KEY));
     }
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#run-button").on("click", onRun);
@@ -27266,19 +27279,21 @@ function onReady() {
         location.hash = "";
         useGist = false;
         editor = ace.edit("editor");
-        editor.setTheme("ace/theme/tomorrow");
-        editor.session.setMode("ace/mode/javascript");
-        editor.setShowInvisibles(true);
-        editor.setHighlightSelectedWord(true);
-        editor.on('focus', onFocus);
 
-        if (v) {
-             editor.setValue(v);
-             editor.gotoLine(editor.session.getLength());
-        }
-        editor.on('change', onChange);
+        loadAce(v);
+
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").hide();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val('');
+    });
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on("hashchange", function () {
+        loadQueryString();
+        if (queryString.hasOwnProperty('gist')) {
+            loadGist();
+        }
+        else {
+
+        }
     });
 }
 
