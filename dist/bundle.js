@@ -27231,7 +27231,10 @@ function onReady() {
 
     drawChart();
 
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste blur submit", function () {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").on("paste submit", function () {
+        this.blur();
+    })
+    .on("blur", function () {
         var val = this.value.replace(/\s/g, '');
         if (val.length == 0)
             return;

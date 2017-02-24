@@ -287,7 +287,10 @@ function onReady() {
 
     drawChart();
 
-    $("#gist-url").on("paste blur submit", function () {
+    $("#gist-url").on("paste submit", function () {
+        this.blur();
+    })
+    .on("blur", function () {
         var val = this.value.replace(/\s/g, '');
         if (val.length == 0)
             return;
