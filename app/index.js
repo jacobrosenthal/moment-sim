@@ -2,6 +2,31 @@ import $ from 'jquery';
 import * as d3 from "d3";
 import store from 'store'
 
+function Editor(value) {
+    this.vibes = [];
+    this.loadAce(value);
+}
+
+Editor.prototype.TEXT_KEY = "text";
+Editor.prototype.EDITOR_ID = "editor";
+
+Editor.prototype.loadAce = function (value) {
+    var editor = ace.edit(this.EDITOR_ID);
+    editor.setTheme("ace/theme/tomorrow");
+    editor.session.setMode("ace/mode/javascript");
+    editor.setShowInvisibles(true);
+    editor.setHighlightSelectedWord(true);
+    editor.on('focus', onFocus);
+
+    if (v) {
+        editor.setValue(v);
+        editor.gotoLine(editor.session.getLength());
+    }
+
+    editor.on('change', onChange);
+    this.editor = editor;
+}
+
 var vibes = [],
 	editor,
 	TEXT_KEY = "text";
@@ -249,27 +274,12 @@ function loadGist() {
     $("#gist-url").parent()[0].MaterialTextfield.checkDirty();
 }
 
-function loadAce(v) {
-    editor = ace.edit("editor");
-    editor.setTheme("ace/theme/tomorrow");
-    editor.session.setMode("ace/mode/javascript");
-    editor.setShowInvisibles(true);
-    editor.setHighlightSelectedWord(true);
-    editor.on('focus', onFocus);
-
-    if (v) {
-         editor.setValue(v);
-         editor.gotoLine(editor.session.getLength());
-    }
-    editor.on('change', onChange);
-}
-
 function onReady() {
     if (queryString.hasOwnProperty('gist')) {
         loadGist();
     }
     else {
-        loadAce(store.get(TEXT_KEY));
+        new Editor(store.get(TEXT_KEY));
     }
 
     $("#run-button").on("click", onRun);
@@ -337,7 +347,7 @@ function onReady() {
         useGist = false;
         editor = ace.edit("editor");
 
-        loadAce(v);
+        new Editor(v);
 
         $("#edit-button").hide();
         $("#gist-url").val('');
