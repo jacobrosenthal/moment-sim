@@ -26972,9 +26972,6 @@ Editor.prototype.loadAce = function (v) {
 };
 
 function Gist(url) {
-    document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
-        'message': "Loading GitHub Gist..."
-    });
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
     postscribe('#editor', '<script src="' + url + '.js"></script>');
@@ -26982,7 +26979,10 @@ function Gist(url) {
 
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(url);
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on("load", function () {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
+    });
 }
 
 Gist.prototype.getText = function () {
@@ -27058,10 +27058,22 @@ function computeScale(x) {
 	return (3.0 * x / 100.0) + 1.0;
 }
 
-Moment.setTimeout = window.setTimeout;
-Moment.clearTimeout = window.clearTimeout;
-Moment.setInterval = window.setInterval;
-Moment.clearInterval = window.clearInterval;
+Moment.setTimeout = function () {
+    return window.setTimeout.apply(window, arguments);
+};
+
+Moment.clearTimeout = function () {
+    return window.clearTimeout.apply(window, arguments);
+};
+
+Moment.setInterval = function () {
+    return window.setInterval.apply(window, arguments);
+};
+
+Moment.clearInterval = function () {
+    return window.clearInterval.apply(window, arguments);
+};
+
 
 var currentLooper = false;
 var currentGraphInterval = false;
@@ -27264,6 +27276,9 @@ function onReady() {
         window.setTimeout(function () { self.blur(); }, 10);
     })
     .on("blur", function () {
+        document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
+            'message': "Loading GitHub Gist..."
+        });
         var val = this.value.replace(/\s/g, '');
         if (val.length == 0)
             return;
