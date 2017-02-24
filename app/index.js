@@ -241,6 +241,7 @@ function onReady() {
 
         $("#edit-button").show();
         $("#gist-url").val(queryString.gist);
+        $("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     }
     else {
         editor = ace.edit("editor");

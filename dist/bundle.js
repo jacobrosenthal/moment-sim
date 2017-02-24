@@ -27185,6 +27185,7 @@ function onReady() {
 
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").show();
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").val(queryString.gist);
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     }
     else {
         editor = ace.edit("editor");
