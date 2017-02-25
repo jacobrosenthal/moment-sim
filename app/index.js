@@ -246,7 +246,7 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 };
 
 function onChange() {
-	var v = editor.getValue();
+	var v = currentEditor.editor.getValue();
 	store.set(TEXT_KEY, v);
 }
 
@@ -285,7 +285,7 @@ function onRun() {
         if (currentGist)
             code = currentGist.getText();
         else
-		    code = editor.getValue();
+		    code = currentEditor.editor.getValue();
 		code = "(function (Moment) { " + code;
 		code = code + " })(Moment);";
 		eval(code);
@@ -317,10 +317,10 @@ function onReady() {
 
     $("#vim-switch").on("change", function () {
         if ($(this).is(":checked")) {
-            editor.setKeyboardHandler("ace/keyboard/vim");
+            currentEditor.editor.setKeyboardHandler("ace/keyboard/vim");
         }
         else {
-            editor.setKeyboardHandler(null);
+            currentEditor.editor.setKeyboardHandler(null);
         }
     });
 
@@ -375,7 +375,6 @@ function onReady() {
         $("body").prepend('<pre id="editor"></pre>');
         location.hash = "";
         useGist = false;
-        editor = ace.edit("editor");
 
         currentEditor = new Editor(v);
         currentGist = false;
@@ -398,7 +397,6 @@ function onReady() {
 $(document).ready(onReady);
 
 function getIntensity(t, v) {
-	t -= v.delay;
 	t += v.position;
 
 	var intensity = v.start;
@@ -407,17 +405,6 @@ function getIntensity(t, v) {
 
 	intensity += fn(t / v.duration) * (v.end - v.start);
 	return intensity;
-}
-
-function computeValue(t, items, previous) {
-	var v;
-	for (var i = 0, len = items.length; i < len; i++) {
-		v = items[i];
-		if (t >= v.delay && t <= v.delay + v.duration - v.position) {
-			return getIntensity(t, v);
-		}
-	}
-	return previous;
 }
 
 function drawSpark(id, data, color) {
@@ -463,64 +450,10 @@ function drawChart() {
     var actuators = [{}, {}, {}, {}];
 
     actuators.forEach(function (a, i) {
-        var next = 0, previous = 0;
         a['pin'] = i;
         a['sparkid'] = sparkIds[i];
-        var values = [];
-        a['values'] = values;
         a['color'] = actuatorColors[i];
         a['currentData'] = Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0);
-
-        var items = vibes.filter(function (v) {
-            return v.pin === i;
-        });
-
-        var maxDuration = items.reduce(function (acc, val) {
-            var d = val.delay + val.duration - val.position;
-
-            if (d > acc)
-                return d;
-            else
-                return acc;
-        }, 0);
-
-        for (var j = 0, len = maxDuration; j <= len; j+= 10) {
-            next = computeValue(j, items, previous);
-            values.push({'time': j, 'intensity': next});
-            values.push({'time': j, 'intensity': next});
-            values.push({'time': j, 'intensity': next});
-            values.push({'time': j, 'intensity': next});
-            previous = next;
-        }
-    });
-
-    var xDomain = [],
-        xExtent;
-
-    vibes.forEach(function (v) {
-        xDomain.push(v['delay']);
-        xDomain.push(v['delay'] + v['duration'] - v['position']);
-    });
-
-    xExtent = d3.extent(xDomain);
-
-    actuators.forEach(function (a, i) {
-        var max = xExtent[1] / 10;
-        var t = a['values'].length * 10;
-        var v;
-
-        if (a['values'].length == 0)
-            v = 0;
-        else
-            v = a['values'][a['values'].length - 1].intensity;
-        while (a['values'].length < max) {
-            t += 10;
-            a['values'].push({
-                'time': t,
-                'intensity': v
-            });
-        }
-
         a['redraw'] = drawSpark(a['sparkid'], a['currentData'], a['color']);
     });
 
@@ -529,12 +462,26 @@ function drawChart() {
     function drawSparks() {
         actuators.forEach(function (a, i) {
             a['currentData'].shift();
-            if (timeCountCs >= a['values'].length) {
-                a['currentData'].push(a['values'][a['values'].length - 1]['intensity']);
-            }
-            else {
-                a['currentData'].push(a['values'][timeCountCs]['intensity']);
-            }
+
+            var items = vibes.filter(function (v) {
+                return v.pin === i;
+            });
+
+            items.forEach(function (vibe) {
+                var t = -1 * vibe.delay, value = 0;
+                if (vibe.delay <= 0 && t <= vibe.duration - vibe.position && t >= 0) {
+                    value = getIntensity(t, vibe);
+                    a['currentData'].push(value);
+                }
+                else if (t > vibe.duration - vibe.position) {
+                    vibes.splice(vibes.indexOf(vibe), 1);
+                }
+                vibe.delay -= 10;
+            });
+
+            if (a.currentData.length < centiSeconds)
+                a.currentData.push(a.currentData[a.currentData.length - 1]);
+
             a['redraw']();
             timeCountCs += 1;
         });
