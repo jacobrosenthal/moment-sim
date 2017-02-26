@@ -447,44 +447,65 @@ function drawSpark(id, data, color) {
 var sparkIds = ["#tl-spark", "#tr-spark", "#bl-spark", "#br-spark"];
 
 function drawChart() {
-    var actuators = [{}, {}, {}, {}];
+    var dataArrays = [
+        Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0),
+        Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0),
+        Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0),
+        Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0)
+    ];
 
-    actuators.forEach(function (a, i) {
-        a['pin'] = i;
-        a['sparkid'] = sparkIds[i];
-        a['color'] = actuatorColors[i];
-        a['currentData'] = Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0);
-        a['redraw'] = drawSpark(a['sparkid'], a['currentData'], a['color']);
-    });
+    var sourceArrays = [
+        [0], [0], [0], [0]
+    ];
 
-    var timeCountCs = 0;
+    var prevLengths = [1, 1, 1, 1];
+
+    var i = 0,
+        pin,
+        sparkid,
+        color,
+        currentData,
+        funcs = [];
+
+    for (var i = 0; i < 4; i++) {
+        pin = i;
+        sparkid = sparkIds[i];
+        color = actuatorColors[i];
+        funcs.push(drawSpark(sparkid, dataArrays[i], color));
+
+        var v, t;
+
+        while (vibes.length > 0) {
+            for (var j = 0, len = vibes.length; j < len; j++) {
+                v = vibes[j];
+
+                if (v && v.pin === i) {
+                    t = -1 * v.delay;
+                    if (v.delay <= 0 && t <= v.duration - v.position && t >= 0) {
+                        sourceArrays[i].push(getIntensity(t, v));
+                    }
+                    else if (t > v.duration - v.position) {
+                        vibes.splice(vibes.indexOf(v), 1);
+                    }
+                    v.delay -= 10;
+                }
+            }
+
+            if (sourceArrays[i].length === prevLengths[i]) {
+                sourceArrays[i].push(sourceArrays[i][sourceArrays[i].length - 1]);
+            }
+        }
+    }
+
+    console.log(sourceArrays);
 
     function drawSparks() {
-        actuators.forEach(function (a, i) {
-            a['currentData'].shift();
+        for (var i = 0; i < 4; i++) {
+            dataArrays[i].shift();
+            dataArrays[i].push(sourceArrays[i].shift());
 
-            var items = vibes.filter(function (v) {
-                return v.pin === i;
-            });
-
-            items.forEach(function (vibe) {
-                var t = -1 * vibe.delay, value = 0;
-                if (vibe.delay <= 0 && t <= vibe.duration - vibe.position && t >= 0) {
-                    value = getIntensity(t, vibe);
-                    a['currentData'].push(value);
-                }
-                else if (t > vibe.duration - vibe.position) {
-                    vibes.splice(vibes.indexOf(vibe), 1);
-                }
-                vibe.delay -= 10;
-            });
-
-            if (a.currentData.length < centiSeconds)
-                a.currentData.push(a.currentData[a.currentData.length - 1]);
-
-            a['redraw']();
-            timeCountCs += 1;
-        });
+            funcs[i]();
+        }
     }
     currentGraphInterval = window.setInterval(drawSparks, 10);
 }
