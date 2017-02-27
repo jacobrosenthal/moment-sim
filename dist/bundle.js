@@ -27403,34 +27403,39 @@ function drawChart() {
 
     var timeCountCs = 0;
 
-    function drawSparks() {
-        actuators.forEach(function (a, i) {
-            a['currentData'].shift();
+    function drawActuator(a, i) {
+        a['currentData'].shift();
 
-            var items = vibes.filter(function (v) {
-                return v.pin === i;
-            });
-
-            items.forEach(function (vibe) {
-                var t = -1 * vibe.delay, value = 0;
-                if (vibe.delay <= 0 && t <= vibe.duration - vibe.position && t >= 0) {
-                    value = getIntensity(t, vibe);
-                    a['currentData'].push(value);
-                }
-                else if (t > vibe.duration - vibe.position) {
-                    vibes.splice(vibes.indexOf(vibe), 1);
-                }
-                vibe.delay -= 10;
-            });
-
-            if (a.currentData.length < centiSeconds)
-                a.currentData.push(a.currentData[a.currentData.length - 1]);
-
-            a['redraw']();
-            timeCountCs += 1;
+        var items = vibes.filter(function (v) {
+            return v.pin === i;
         });
+
+        items.forEach(function (vibe) {
+            var t = -1 * vibe.delay, value = 0;
+            if (vibe.delay <= 0 && t <= vibe.duration - vibe.position && t >= 0) {
+                value = getIntensity(t, vibe);
+                a['currentData'].push(value);
+            }
+            else if (t > vibe.duration - vibe.position) {
+                vibes.splice(vibes.indexOf(vibe), 1);
+            }
+            vibe.delay -= 10;
+        });
+
+        if (a.currentData.length < centiSeconds)
+            a.currentData.push(a.currentData[a.currentData.length - 1]);
+
+        timeCountCs += 1;
     }
-    currentGraphInterval = window.setInterval(drawSparks, 10);
+
+    function drawSparks() {
+        actuators.forEach(drawActuator);
+        actuators.forEach(drawActuator);
+        actuators.forEach(drawActuator);
+
+        actuators.forEach(function (a) { a.redraw(); });
+    }
+    currentGraphInterval = window.setInterval(drawSparks, 30);
 }
 
 (function () {
