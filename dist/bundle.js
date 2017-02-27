@@ -27429,11 +27429,15 @@ function drawChart() {
     }
 
     function drawSparks() {
-        actuators.forEach(drawActuator);
-        actuators.forEach(drawActuator);
-        actuators.forEach(drawActuator);
+        var a, i;
 
-        actuators.forEach(function (a) { a.redraw(); });
+        for (i = 0; i < 4; i++) {
+            a = actuators[i];
+            drawActuator(a, i);
+            drawActuator(a, i);
+            drawActuator(a, i);
+            a.redraw();
+        }
     }
     currentGraphInterval = window.setInterval(drawSparks, 30);
 }
