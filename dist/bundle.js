@@ -27335,6 +27335,8 @@ function onReady() {
         else {
 
         }
+
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     });
 }
 

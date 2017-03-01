@@ -391,6 +391,8 @@ function onReady() {
         else {
 
         }
+
+        $("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     });
 }
 
