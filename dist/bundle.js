@@ -27058,21 +27058,13 @@ function computeScale(x) {
 	return (3.0 * x / 100.0) + 1.0;
 }
 
-Moment.setTimeout = function () {
-    return window.setTimeout.apply(window, arguments);
-};
+Moment.setTimeout = window.setTimeout.bind(window);
 
-Moment.clearTimeout = function () {
-    return window.clearTimeout.apply(window, arguments);
-};
+Moment.clearTimeout = window.clearTimeout.bind(window);
 
-Moment.setInterval = function () {
-    return window.setInterval.apply(window, arguments);
-};
+Moment.setInterval = window.setInterval.bind(window);
 
-Moment.clearInterval = function () {
-    return window.clearInterval.apply(window, arguments);
-};
+Moment.clearInterval = window.clearInterval.bind(window);
 
 
 var currentLooper = false;
@@ -27342,71 +27334,65 @@ function onReady() {
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
 
-function getIntensity(t, v) {
-	t += v.position;
-
-	var intensity = v.start;
-
-	var fn = MomentEffects[v.func];
-
-	intensity += fn(t / v.duration) * (v.end - v.start);
-	return intensity;
-}
-
-function drawSpark(id, data, color) {
-    color = color || "#000";
-    var interpolation = "basis",
-        animate = true,
-        updateDelay = 10,
-        transitionDelay = 10,
-        width = 400,
-        height = 70;
-
-    var graph = __WEBPACK_IMPORTED_MODULE_1_d3__["select"](id).append("svg:svg").attr("width", "100%").attr("height", "100%");
-    var x = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().domain([0, centiSeconds]).range([-5, width]);
-    var y = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().domain([100, 0]).range([0, height]);
-
-    var line = __WEBPACK_IMPORTED_MODULE_1_d3__["line"]()
-        .x(function (d, i) {
-            return x(i);
-        })
-        .y(function (d, i) {
-            return y(d);
-        })
-        .curve(__WEBPACK_IMPORTED_MODULE_1_d3__["curveBasis"]);
-
-    graph.append("svg:path").attr("d", line(data));
-    graph.selectAll('path')
-      .attr('stroke-width', 2)
-      .attr('fill', 'none')
-      .style("stroke", function(d) { return color; });
-
-    function redrawWithAnimation () {
-        graph.selectAll("path")
-            .data([data]) // set the new data
-            .attr("d", line) // apply the new data values ... but the new value is hidden at this point off the right of the canvas
-    }
-
-    return redrawWithAnimation;
-}
-
 var sparkIds = ["#tl-spark", "#tr-spark", "#bl-spark", "#br-spark"];
 
-function drawChart() {
-    var actuators = [{}, {}, {}, {}];
+function ActuatorChart(index) {
+    this.pin = index;
+    this.sparkid = sparkIds[index];
+    this.color = actuatorColors[index];
+    this.data = Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0);
 
-    actuators.forEach(function (a, i) {
-        a['pin'] = i;
-        a['sparkid'] = sparkIds[i];
-        a['color'] = actuatorColors[i];
-        a['currentData'] = Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0);
-        a['redraw'] = drawSpark(a['sparkid'], a['currentData'], a['color']);
-    });
+    this.initChart();
+}
 
-    var timeCountCs = 0;
+ActuatorChart.prototype = {
+    getIntensity: function (t, v) {
+        t += v.position;
 
-    function drawActuator(a, i) {
-        a['currentData'].shift();
+        var intensity = v.start;
+
+        var fn = MomentEffects[v.func];
+
+        intensity += fn(t / v.duration) * (v.end - v.start);
+        return intensity;
+    },
+
+    initChart: function () {
+        var width = 400,
+            height = 70,
+            color = this.color;
+
+        this.graph = __WEBPACK_IMPORTED_MODULE_1_d3__["select"](this.sparkid).append("svg:svg").attr("width", "100%").attr("height", "100%");
+
+        var x = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().domain([0, centiSeconds]).range([-5, width]);
+        var y = __WEBPACK_IMPORTED_MODULE_1_d3__["scaleLinear"]().domain([100, 0]).range([0, height]);
+
+        this.line = __WEBPACK_IMPORTED_MODULE_1_d3__["line"]()
+            .x(function (d, i) {
+                return x(i);
+            })
+            .y(function (d, i) {
+                return y(d);
+            })
+            .curve(__WEBPACK_IMPORTED_MODULE_1_d3__["curveBasis"]);
+
+
+        this.graph.append("svg:path").attr("d", this.line(this.data));
+        this.graph.selectAll('path')
+          .attr('stroke-width', 2)
+          .attr('fill', 'none')
+          .style("stroke", function(d) { return color; });
+    },
+
+    redraw: function () {
+        this.graph.selectAll("path").data([this.data]).attr("d", this.line);
+    },
+
+    updateData: function () {
+        this.data.shift();
+        var self = this;
+        var i = this.pin;
+        var getIntensity = this.getIntensity;
 
         var items = vibes.filter(function (v) {
             return v.pin === i;
@@ -27416,7 +27402,7 @@ function drawChart() {
             var t = -1 * vibe.delay, value = 0;
             if (vibe.delay <= 0 && t <= vibe.duration - vibe.position && t >= 0) {
                 value = getIntensity(t, vibe);
-                a['currentData'].push(value);
+                self.data.push(value);
             }
             else if (t > vibe.duration - vibe.position) {
                 vibes.splice(vibes.indexOf(vibe), 1);
@@ -27424,23 +27410,29 @@ function drawChart() {
             vibe.delay -= 10;
         });
 
-        if (a.currentData.length < centiSeconds)
-            a.currentData.push(a.currentData[a.currentData.length - 1]);
-
-        timeCountCs += 1;
+        if (this.data.length < centiSeconds)
+            this.data.push(this.data[this.data.length - 1]);
     }
+};
 
-    function drawSparks() {
-        var a, i;
+var actuators = [{}, {}, {}, {}];
 
-        for (i = 0; i < 4; i++) {
-            a = actuators[i];
-            drawActuator(a, i);
-            drawActuator(a, i);
-            drawActuator(a, i);
-            a.redraw();
-        }
+function drawSparks() {
+    for (var i = 0; i < 4; i++) {
+        var a = actuators[i];
+        a.updateData();
+        a.updateData();
+        a.updateData();
+        a.redraw();
     }
+}
+
+function drawChart() {
+    actuators = [];
+
+    for (var i = 0; i < 4; i++)
+        actuators.push(new ActuatorChart(i));
+
     currentGraphInterval = window.setInterval(drawSparks, 30);
 }
 
