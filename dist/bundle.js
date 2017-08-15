@@ -27053,13 +27053,6 @@ var currentLooper = false;
 var currentGraphInterval = false;
 var centiSeconds = 200; // hundredths of seconds in chart
 
-Moment.LED.setColor = function(color) {
-	if (currentLooper) window.clearInterval(currentLooper);
-	var c = "rgb(" + color.red + "," + color.green + "," + color.blue + ")";
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
-		.css('transition-duration', '')
-		.css('background-color', c);
-};
 
 Moment['_tween_led_color'] = function (r, g, b, func, duration) {
 	if (currentLooper) window.clearInterval(currentLooper);
