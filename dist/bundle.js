@@ -27099,45 +27099,6 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
         'position': position,
         'delay': delay
     });
-
-	var pinEl = getPinEl(pin),
-		barEl = getBarEl(pin);
-
-	var startScale = computeScale(start);
-
-	function executeTransition() {
-		console.log("Start scale: ", startScale);
-        pinEl.css('transition-duration', '');
-        pinEl.css('transition-property', '');
-		pinEl.css('transform', 'scale(' + startScale + ')');
-		barEl.css('transform', 'scaleY(' + start / 100.0 + ')');
-
-		var endScale = computeScale(end);
-
-		window.setTimeout(function () {
-
-		pinEl.css({
-			'transition-duration': duration + 'ms',
-			'transition-property': 'transform'
-		});
-
-		barEl.css({
-			'transition-duration': duration + 'ms',
-			'transition-property': 'transform'
-		});
-
-		// TODO: implement position handling
-		// TODO: implement easing equations
-
-		pinEl.css('transform', 'scale(' + endScale + ')');
-		console.log("End scale: ", endScale);
-		barEl.css('transform', 'scaleY(' + end / 100.0 + ')');
-
-		}, 5);
-	}
-
-	window.setTimeout(executeTransition, delay + centiSeconds * 5);
-
 };
 
 /** When the editor changes, store the text in HTML5 localStorage via store.js
@@ -27351,10 +27312,13 @@ ActuatorChart.prototype = {
           .attr('stroke-width', 2)
           .attr('fill', 'none')
           .style("stroke", function(d) { return color; });
+
+        this.pinEl = getPinEl(this.pin);
     },
 
     redraw: function () {
         this.graph.selectAll("path").data([this.data]).attr("d", this.line);
+        this.pinEl.css('transform', 'scale(' + computeScale(this.data[this.data.length / 2]) + ')');
     },
 
     updateData: function () {
@@ -27384,18 +27348,33 @@ ActuatorChart.prototype = {
     }
 };
 
-var actuators = [{}, {}, {}, {}];
+var actuators = [{}, {}, {}, {}],
+    lastDraw = new Date(),
+    totalExtraTime = 0;
 
 function drawSparks() {
+    var now = new Date();
+    var ms = now - lastDraw;
+    lastDraw = now;
+
+    totalExtraTime += ms - 20;
+
+    while (totalExtraTime > 10) {
+        totalExtraTime -= 10;
+        for (var i = 0; i < 4; i++) {
+            var a = actuators[i];
+            a.updateData();
+        }
+    }
+
     for (var i = 0; i < 4; i++) {
         var a = actuators[i];
-        a.updateData();
         a.updateData();
         a.updateData();
         a.redraw();
     }
 
-    currentGraphTimeout = window.setTimeout(drawSparks, 30);
+    currentGraphTimeout = window.setTimeout(drawSparks, 20);
 }
 
 function drawChart() {
@@ -27404,7 +27383,9 @@ function drawChart() {
     for (var i = 0; i < 4; i++)
         actuators.push(new ActuatorChart(i));
 
-    currentGraphTimeout = window.setTimeout(drawSparks, 30);
+    lastDraw = new Date();
+    totalExtraTime = 0;
+    currentGraphTimeout = window.setTimeout(drawSparks, 20);
 }
 
 (function () {
