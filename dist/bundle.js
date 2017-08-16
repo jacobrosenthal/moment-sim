@@ -27074,7 +27074,7 @@ Moment.setInterval = window.setInterval.bind(window); // SDK intervals
 Moment.clearInterval = window.clearInterval.bind(window); // SDK interval clear
 
 
-var currentGraphInterval = false; // current function for refreshing the graph
+var currentGraphTimeout = false; // current function for refreshing the graph
 var centiSeconds = 200; // hundredths of seconds in chart
 
 /** Add a vibration to the Haptic Timeline within the simulator.
@@ -27169,7 +27169,7 @@ function onRun() {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").css('background-color', actuatorColors[2]);
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").css('background-color', actuatorColors[3]);
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").removeAttr('style');
-    if (currentGraphInterval) window.clearInterval(currentGraphInterval);
+    if (currentGraphTimeout) window.clearTimeout(currentGraphTimeout);
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("svg").empty();
 
     document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
@@ -27394,6 +27394,8 @@ function drawSparks() {
         a.updateData();
         a.redraw();
     }
+
+    currentGraphTimeout = window.setTimeout(drawSparks, 30);
 }
 
 function drawChart() {
@@ -27402,7 +27404,7 @@ function drawChart() {
     for (var i = 0; i < 4; i++)
         actuators.push(new ActuatorChart(i));
 
-    currentGraphInterval = window.setInterval(drawSparks, 30);
+    currentGraphTimeout = window.setTimeout(drawSparks, 30);
 }
 
 (function () {
