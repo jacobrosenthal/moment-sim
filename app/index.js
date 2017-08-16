@@ -346,6 +346,8 @@ function ActuatorChart(index) {
     this.color = actuatorColors[index];
     this.data = Array.apply(null, Array(centiSeconds)).map(Number.prototype.valueOf,0);
 
+    this.redraw = this.redraw.bind(this);
+
     this.initChart();
 }
 
@@ -445,7 +447,7 @@ function drawSparks() {
         var a = actuators[i];
         a.updateData();
         a.updateData();
-        a.redraw();
+        window.requestAnimationFrame(a.redraw);
     }
 
     currentGraphTimeout = window.setTimeout(drawSparks, 20);
