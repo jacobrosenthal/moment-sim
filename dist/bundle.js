@@ -26928,20 +26928,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 
+
+var TEXT_KEY = "text"; // HTML5 localStorage key to use for saving user input
+
+/** The class that handles actions on the main text editing pane where a
+  * user inputs JavaScript code.
+  */
 function Editor(value) {
     this.vibes = [];
     this.loadAce(value);
 }
 
-Editor.prototype.TEXT_KEY = "text";
-Editor.prototype.EDITOR_ID = "editor";
 
+Editor.prototype.TEXT_KEY = TEXT_KEY; // store.js key (localStorage)
+Editor.prototype.EDITOR_ID = "editor"; // HTML element ID for editor container
+
+/** Load the Ace editor into the current browser window using the EDITOR_ID
+  * as the container element ID for the editor.
+  */
 Editor.prototype.loadAce = function (v) {
     var editor = ace.edit(this.EDITOR_ID);
     editor.setTheme("ace/theme/tomorrow");
     editor.session.setMode("ace/mode/javascript");
     editor.setShowInvisibles(true);
     editor.setHighlightSelectedWord(true);
+    editor.setFontSize(14);
     editor.on('focus', onFocus);
 
     if (v) {
@@ -26953,6 +26964,9 @@ Editor.prototype.loadAce = function (v) {
     this.editor = editor;
 };
 
+/** The class the handles Github Gist content (including the display and DOM
+  * events that are attached).
+  */
 function Gist(url) {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#editor").remove();
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("body").prepend('<div id="editor" style="overflow-y: scroll;"></div>');
@@ -26967,6 +26981,8 @@ function Gist(url) {
     });
 }
 
+/** Gets the code from the Github Gist.
+  */
 Gist.prototype.getText = function () {
     var gists = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(".gist-data");
 
@@ -26982,6 +26998,9 @@ Gist.prototype.getText = function () {
     return text.join('\n');
 };
 
+/** Get the gist URL from the HTML5 hash change API (after the hash specifying
+  * the ID within url).
+  */
 Gist.getHashParam = function () {
     var queryString = {};
     location.hash.replace('#', '').split("&").forEach(function (pair) {
@@ -26997,15 +27016,18 @@ Gist.getHashParam = function () {
         return false;
 };
 
+/** Variables for holding the current instances of the editor and Github
+  * Gist objects.
+  */
 var currentEditor = false,
     currentGist = false;
 
-var vibes = [],
-	editor,
-	TEXT_KEY = "text";
+var vibes = []; // array of the vibrations to execute
 
-var useGist = false;
+var useGist = false; // current state of the editor - true if Gist
 
+/** Given a motor number, which part of the animation represents its intensity?
+  */
 function getPinEl(pin) {
 	if (pin === Moment.Actuators.topLeft.pin) {
 		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator");
@@ -27021,6 +27043,8 @@ function getPinEl(pin) {
 	}
 }
 
+/** Given a motor number, which item in the graph represents its intensity?
+ */
 function getBarEl(pin) {
 	if (pin === Moment.Actuators.topLeft.pin) {
 		return __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#tl-bar");
@@ -27036,67 +27060,25 @@ function getBarEl(pin) {
 	}
 }
 
+/** Given an intensity, what is the size of the "sonar pulse" visual animation
+  * on screen?
+  */
 function computeScale(x) {
 	return (3.0 * x / 100.0) + 1.0;
 }
 
-Moment.setTimeout = window.setTimeout.bind(window);
-
-Moment.clearTimeout = window.clearTimeout.bind(window);
-
-Moment.setInterval = window.setInterval.bind(window);
-
-Moment.clearInterval = window.clearInterval.bind(window);
+// The following assignments alias Moment SDK timing functions to the browser
+Moment.setTimeout = window.setTimeout.bind(window); // SDK timeouts
+Moment.clearTimeout = window.clearTimeout.bind(window); // SDK timeout clear
+Moment.setInterval = window.setInterval.bind(window); // SDK intervals
+Moment.clearInterval = window.clearInterval.bind(window); // SDK interval clear
 
 
-var currentLooper = false;
-var currentGraphInterval = false;
+var currentGraphInterval = false; // current function for refreshing the graph
 var centiSeconds = 200; // hundredths of seconds in chart
 
-
-Moment['_tween_led_color'] = function (r, g, b, func, duration) {
-	if (currentLooper) window.clearInterval(currentLooper);
-	var c = "rgb(" + r + "," + g + "," + b + ")";
-
-	function startTween() {
-		__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
-			.css('transition-duration', duration + 'ms')
-			.css('background-color', c);
-	}
-
-	startTween.duration = duration;
-
-	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween', startTween);
-
-    window.setTimeout(startTween, centiSeconds * 5);
-}
-
-Moment['_loop_led_color'] = function (r, g, b, func, duration) {
-	if (currentLooper) window.clearInterval(currentLooper);
-	var c = "rgb(" + r + "," + g + "," + b + ")";
-
-	function startLoop() {
-		__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
-			.css('transition-duration', duration + 'ms')
-			.css('background-color', c);
-	}
-
-	var loop = true;
-
-	startLoop.duration = duration;
-
-	function runLoop() {
-		startLoop();
-		var fn = __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween');
-
-		window.setTimeout(fn, duration);
-	}
-
-    window.setTimeout(function () {
-        currentLooper = window.setInterval(runLoop, duration + __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led").data('last-tween').duration);
-    }, centiSeconds * 5);
-}
-
+/** Add a vibration to the Haptic Timeline within the simulator.
+ */
 Moment._add_transition = function(pin, start, end, func, duration, position, delay) {
 	vibes.push({
 		'pin': pin,
@@ -27125,6 +27107,8 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 
 	function executeTransition() {
 		console.log("Start scale: ", startScale);
+        pinEl.css('transition-duration', '');
+        pinEl.css('transition-property', '');
 		pinEl.css('transform', 'scale(' + startScale + ')');
 		barEl.css('transform', 'scaleY(' + start / 100.0 + ')');
 
@@ -27156,11 +27140,15 @@ Moment._add_transition = function(pin, start, end, func, duration, position, del
 
 };
 
+/** When the editor changes, store the text in HTML5 localStorage via store.js
+  */
 function onChange() {
 	var v = currentEditor.editor.getValue();
 	__WEBPACK_IMPORTED_MODULE_2_store___default.a.set(TEXT_KEY, v);
 }
 
+/** The color of each of the actuators on the charts and visual animation.
+  */
 var actuatorColors = [
     "#91BD00",
     "#fdaa00",
@@ -27168,6 +27156,8 @@ var actuatorColors = [
     "#850068"
 ];
 
+/** Execute the user code and trigger the necessary animations in the simulator
+  */
 function onRun() {
 	vibes = [];
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()("#top-left-actuator").removeAttr('style');
@@ -27179,11 +27169,7 @@ function onRun() {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-left-actuator").css('background-color', actuatorColors[2]);
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#bottom-right-actuator").css('background-color', actuatorColors[3]);
 	__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".actuator-bar").removeAttr('style');
-    if (currentLooper) window.clearInterval(currentLooper);
     if (currentGraphInterval) window.clearInterval(currentGraphInterval);
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#center-led")
-        .css('transition-duration', '')
-        .css('background-color', '#000');
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()("svg").empty();
 
     document.getElementById("toaster-popup").MaterialSnackbar.showSnackbar({
@@ -27205,12 +27191,16 @@ function onRun() {
 	}, 100);
 }
 
+/** When the editor is in focus, make sure that the settings drawer is closed.
+  */
 function onFocus() {
     if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(".mdl-layout__drawer.is-visible").length > 0) {
         document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     }
 }
 
+/** Initialize all of the DOM interactions when ready.
+  */
 function onReady() {
     var gistUrl = Gist.getHashParam();
     if (gistUrl) {
@@ -27307,10 +27297,14 @@ function onReady() {
     });
 }
 
-__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady);
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady); // execute on DOM ready event
 
+// HTML ID's for the different lines in the actuator graph
 var sparkIds = ["#tl-spark", "#tr-spark", "#bl-spark", "#br-spark"];
 
+/** Class representing an individual chart where the intensity of an actuator
+  * is plotted.
+  */
 function ActuatorChart(index) {
     this.pin = index;
     this.sparkid = sparkIds[index];
