@@ -4,3 +4,6 @@
 [submodule "dist/moment-sdk"]
 	path = dist/moment-sdk
 	url = https://github.com/SomaticLabs/moment-sdk.git
+[submodule "dist/moment-web-ble"]
+	path = dist/moment-web-ble
+	url = git@github.com:SomaticLabs/moment-web-ble.git

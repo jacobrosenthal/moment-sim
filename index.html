@@ -23,12 +23,20 @@
   <i class="material-icons">edit</i>
 </button>
 
+<button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="compile-button">
+  <i class="material-icons">cloud_download</i>
+</button>
+
 <div class="mdl-tooltip mdl-tooltip--left" for="run-button">
 Run Code
 </div>
 
 <div class="mdl-tooltip mdl-tooltip--left" for="edit-button">
 Edit Code
+</div>
+
+<div class="mdl-tooltip mdl-tooltip--left" for="compile-button">
+Compile and Download
 </div>
 
 <div id="sidebar">
@@ -203,6 +211,10 @@ Edit Code
   <div class="mdl-snackbar__text"></div>
   <button class="mdl-snackbar__action" type="button"></button>
 </div>
+
+<form id="js-compile" action="https://firmware.wearmoment.com/compile">
+  <input type="hidden" name="js" value="" id="js-src-input">
+</form>
 
 <script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>

@@ -36,6 +36,41 @@ Editor.prototype.loadAce = function (v) {
 
     editor.on('change', onChange);
     this.editor = editor;
+    this.catchDroppedFiles();
+};
+
+/** Attach file drop events for the editor.
+  */
+Editor.prototype.catchDroppedFiles = function (editor) {
+    if (typeof editor === 'undefined')
+        editor = this.editor;
+
+    function catchAndDoNothing(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
+    function drop(e) {
+        catchAndDoNothing(e);
+        var file = e.dataTransfer.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                editor.session.setValue(contents);
+            };
+            reader.readAsText(file);
+        } else {
+            throw new Error("Failed to load file");
+        }
+    }
+
+    function dragAndDropHook() {
+        editor.container.addEventListener("dragenter", catchAndDoNothing, false);
+        editor.container.addEventListener("dragover", catchAndDoNothing, false);
+        editor.container.addEventListener("drop", drop, false);
+    }
+    dragAndDropHook();
 };
 
 /** The class the handles Github Gist content (including the display and DOM
@@ -48,6 +83,7 @@ function Gist(url) {
     useGist = true;
 
     $("#edit-button").show();
+    $("#compile-button").hide();
     $("#gist-url").val(url);
 
     $(window).on("load", function () {
@@ -295,6 +331,7 @@ function onReady() {
         useGist = true;
 
         $("#edit-button").show();
+        $("#compile-button").hide();
         document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     });
 
@@ -316,7 +353,16 @@ function onReady() {
         currentGist = false;
 
         $("#edit-button").hide();
+        $("#compile-button").show();
         $("#gist-url").val('');
+    });
+
+    $("#compile-button").on("click", function (e) {
+        e.preventDefault();
+        var text = currentEditor.editor.getValue();
+
+        $("#js-src-input").val(text);
+        document.getElementById('js-compile').submit();
     });
 
     $(window).on("hashchange", function () {
