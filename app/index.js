@@ -272,6 +272,14 @@ function onFocus() {
     }
 }
 
+function saveAPIKey() {
+    store.set("api-key", $("#api-key").val());
+}
+
+function restoreAPIKey() {
+    $("#api-key").val(store.get('api-key'));
+}
+
 /** Initialize all of the DOM interactions when ready.
   */
 function onReady() {
@@ -378,6 +386,10 @@ function onReady() {
 
         $("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     });
+
+    restoreAPIKey();
+
+    $("#api-key").on("change", saveAPIKey);
 }
 
 $(document).ready(onReady); // execute on DOM ready event

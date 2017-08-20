@@ -27198,6 +27198,14 @@ function onFocus() {
     }
 }
 
+function saveAPIKey() {
+    __WEBPACK_IMPORTED_MODULE_2_store___default.a.set("api-key", __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#api-key").val());
+}
+
+function restoreAPIKey() {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#api-key").val(__WEBPACK_IMPORTED_MODULE_2_store___default.a.get('api-key'));
+}
+
 /** Initialize all of the DOM interactions when ready.
   */
 function onReady() {
@@ -27304,6 +27312,10 @@ function onReady() {
 
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#gist-url").parent()[0].MaterialTextfield.checkDirty();
     });
+
+    restoreAPIKey();
+
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#api-key").on("change", saveAPIKey);
 }
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(onReady); // execute on DOM ready event
