@@ -32,7 +32,6 @@ Editor.prototype.loadAce = function (v) {
     if (v) {
         editor.setValue(v);
         editor.gotoLine(editor.session.getLength());
-        onChange();
     }
 
     editor.on('change', onChange);
@@ -360,6 +359,7 @@ function onReady() {
         useGist = false;
 
         currentEditor = new Editor(v);
+        onChange();
         currentGist = false;
 
         $("#edit-button").hide();

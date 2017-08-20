@@ -26958,7 +26958,6 @@ Editor.prototype.loadAce = function (v) {
     if (v) {
         editor.setValue(v);
         editor.gotoLine(editor.session.getLength());
-        onChange();
     }
 
     editor.on('change', onChange);
@@ -27286,6 +27285,7 @@ function onReady() {
         useGist = false;
 
         currentEditor = new Editor(v);
+        onChange();
         currentGist = false;
 
         __WEBPACK_IMPORTED_MODULE_0_jquery___default()("#edit-button").hide();

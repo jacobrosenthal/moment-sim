@@ -59,7 +59,8 @@ Compile and Download
       </div>
 
       <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="example-menu">
-        <li class="mdl-menu__item"><a href="#gist=https://gist.github.com/shantanubala/1f7d0dfb9bbef3edca8d0bb164c56aa0">Simple Vibration Example</a></li>
+        <li class="mdl-menu__item"><a href="#gist=https://gist.github.com/shantanubala/1f7d0dfb9bbef3edca8d0bb164c56aa0">Simple Vibration</a></li>
+        <li class="mdl-menu__item"><a href="#gist=https://gist.github.com/jakerockland/6867f3b59ad552d47e8077ec400cdf92">Meditation App</a></li>
       </ul>
     </div>
     <!-- Tabs
@@ -133,8 +134,11 @@ Compile and Download
 
             <li class="mdl-list__item">
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="api-key">
-                <label class="mdl-textfield__label" for="api-key">Moment Serial Number</label>
+                <form id="js-compile" action="https://firmware.wearmoment.com/compile">
+                  <input type="hidden" name="js" value="" id="js-src-input">
+                  <input class="mdl-textfield__input" type="text" name="token" id="api-key">
+                  <label class="mdl-textfield__label" for="api-key">Moment Serial Number</label>
+                </form>
               </div>
             </li>
 
@@ -218,10 +222,6 @@ Compile and Download
   <div class="mdl-snackbar__text"></div>
   <button class="mdl-snackbar__action" type="button"></button>
 </div>
-
-<form id="js-compile" action="https://firmware.wearmoment.com/compile">
-  <input type="hidden" name="js" value="" id="js-src-input">
-</form>
 
 <script src="dist/ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>
