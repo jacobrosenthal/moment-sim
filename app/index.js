@@ -32,6 +32,7 @@ Editor.prototype.loadAce = function (v) {
     if (v) {
         editor.setValue(v);
         editor.gotoLine(editor.session.getLength());
+        onChange();
     }
 
     editor.on('change', onChange);
@@ -58,6 +59,7 @@ Editor.prototype.catchDroppedFiles = function (editor) {
             reader.onload = function (e) {
                 var contents = e.target.result;
                 editor.session.setValue(contents);
+                onChange();
             };
             reader.readAsText(file);
         } else {
